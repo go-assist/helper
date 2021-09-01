@@ -1,12 +1,13 @@
 # Helper
-##### 1.一些常用的助手函数工具包
+##### 1.仓库迁移至☞ https://github.com/golangtoolkit
 
-##### 2.获取 
-go get -u github.com/applytogetintoyourlife/Helper
 
-go get -u github.com/golangtoolkit/helper
+##### 2.一些常用的助手函数工具包
 
-##### 3. 示例 for example
+##### 3.获取 
+go get -u github.com/golangtoolkit
+
+##### 4. 示例 for example
 ```Golang
 package helper
 
@@ -81,4 +82,4 @@ func example() {
 }
 ```
 
-##### 4. 使用过程如有疑问欢迎issue
+##### 5. 使用过程如有疑问欢迎issue
