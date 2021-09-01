@@ -23,35 +23,34 @@ func (tj *TsJson) ParseJson(jsonStr string) (result gjson.Result, err error) {
 // MapToJson map转为json字符串.
 func (tj *TsJson) MapToJson(m map[string]interface{}) string {
 	m2Json , _ := json.Marshal(m)
-	map2String := string(m2Json)
-	return map2String
+	return string(m2Json)
 }
 
 // JsonToMap json 转map.
-func (tj *TsJson) JsonToMap(jsonStr string) map[string]interface{} {
-	var convert map[string]interface{}
+func (tj *TsJson) JsonToMap(jsonStr string) (convert map[string]interface{}) {
 	if jsonStr == "" || !TStr.IsJSON(jsonStr) {
 		return convert
 	}
 	err := json.Unmarshal([]byte(jsonStr), &convert)
 	if err != nil {
 		log.Println(err)
+		return
 	}
-	return convert
+	return
 }
 
 
 // JsonToMapArr json转map数组.
-func (tj *TsJson) JsonToMapArr(jsonStr string) []map[string]interface{} {
-	var convert []map[string]interface{}
+func (tj *TsJson) JsonToMapArr(jsonStr string) (convert []map[string]interface{}) {
 	if jsonStr == "" || !TStr.IsJSON(jsonStr){
 		return convert
 	}
 	err := json.Unmarshal([]byte(jsonStr), &convert)
 	if err != nil {
 		log.Println(err)
+		return
 	}
-	return convert
+	return
 }
 
 // StructToMap 结构体转map.

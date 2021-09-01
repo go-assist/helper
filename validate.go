@@ -13,6 +13,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"reflect"
 	"strings"
 	"unicode"
@@ -391,8 +392,8 @@ func (ts *TsStr) IsBase64Image(str string) bool {
 	return RegBase64Image.MatchString(dataURI[0]) && RegBase64.MatchString(dataURI[1])
 }
 
-// IsRsaPublicKey 检查字符串是否RSA的公钥,keylen为密钥长度.
-func (ts *TsStr) IsRsaPublicKey(str string, keylen int) bool {
+// IsRsaPublicKey 检查字符串是否RSA的公钥,keyLength为密钥长度.
+func (ts *TsStr) IsRsaPublicKey(str string, keyLength int) bool {
 	bb := bytes.NewBufferString(str)
 	pemBytes, _ := ioutil.ReadAll(bb)
 
@@ -422,7 +423,7 @@ func (ts *TsStr) IsRsaPublicKey(str string, keylen int) bool {
 		return false
 	}
 	bitlen := len(pubkey.N.Bytes()) * 8
-	return bitlen == keylen
+	return bitlen == keyLength
 }
 
 // IsUrl 检查字符串是否URL.
@@ -649,4 +650,94 @@ func (tc *TsConvert) IsStruct(val interface{}) bool {
 func (tc *TsConvert) IsInterface(val interface{}) bool {
 	r := reflectPtr(reflect.ValueOf(val))
 	return r.Kind() == reflect.Invalid
+}
+
+// IsOdd 变量是否奇数.
+func (ti *TsInt) IsOdd(val int) bool {
+	return val%2 != 0
+}
+
+// IsEven 变量是否偶数.
+func (ti *TsInt) IsEven(val int) bool {
+	return val%2 == 0
+}
+
+// IsRangeInt 数值是否在2个整数范围内.
+func (ti *TsInt) IsRangeInt(value, left, right int) bool {
+	if left > right {
+		left, right = right, left
+	}
+	return value >= left && value <= right
+}
+
+
+// IsNegative 数值是否为负数.
+func (tf *TsFloat) IsNegative(value float64) bool {
+	return value < 0
+}
+
+// IsPositive 数值是否为正数.
+func (tf *TsFloat) IsPositive(value float64) bool {
+	return value > 0
+}
+
+// IsNonNegative 数值是否为非负数.
+func (tf *TsFloat) IsNonNegative(value float64) bool {
+	return value >= 0
+}
+
+// IsNonPositive 数值是否为非正数.
+func (tf *TsFloat) IsNonPositive(value float64) bool {
+	return value <= 0
+}
+
+// IsWhole 数值是否为整数.
+func (tf *TsFloat) IsWhole(value float64) bool {
+	return math.Remainder(value, 1) == 0
+}
+
+// IsRangeFloat32 数值是否在2个32位浮点数范围内.
+func (tf *TsFloat) IsRangeFloat32(value, left, right float32) bool {
+	if left > right {
+		left, right = right, left
+	}
+	return value >= left && value <= right
+}
+
+// IsRangeFloat64 数值是否在2个64位浮点数范围内.
+func (tf *TsFloat) IsRangeFloat64(value, left, right float64) bool {
+	if left > right {
+		left, right = right, left
+	}
+	return value >= left && value <= right
+}
+
+// AverageFloat64 对浮点数序列求平均值.
+func (tf *TsFloat) AverageFloat64(nums ...float64) (res float64) {
+	length := len(nums)
+	if length == 0 {
+		return
+	} else if length == 1 {
+		res = nums[0]
+	} else {
+		total := tf.SumFloat64(nums...)
+		res = total / float64(length)
+	}
+
+	return
+}
+
+// IsDir 是否目录(且存在)
+func (tf *TsFile) IsDir(filePath string) bool {
+	f, err := os.Lstat(filePath)
+	if os.IsNotExist(err) || nil != err {
+		return false
+	}
+	return f.IsDir()
+}
+
+// IsFileExist 文件是否存在
+func (tf *TsFile) IsFileExist(filePath string) bool {
+	_, err := os.Stat(filePath)
+	return err == nil || os.IsExist(err)
 }

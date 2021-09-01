@@ -42,7 +42,7 @@ func TestIsOddIsEven(t *testing.T) {
 
 func TestInRangeInt(t *testing.T) {
 	for _, test := range exampleIntRange {
-		actual := TInt.InRangeInt(test.param, test.left, test.right)
+		actual := TInt.IsRangeInt(test.param, test.left, test.right)
 		if actual != test.expected {
 			t.Errorf("Expected InRangeInt(%v, %v, %v) to be %v, got %v using type int", test.param, test.left, test.right, test.expected, actual)
 		}

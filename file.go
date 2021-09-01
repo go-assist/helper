@@ -11,12 +11,6 @@ import (
 	"strings"
 )
 
-// IsFileExist 文件是否存在
-func (tf *TsFile) IsFileExist(filePath string) bool {
-	_, err := os.Stat(filePath)
-	return err == nil || os.IsExist(err)
-}
-
 // FileWrite 写文件
 func (tf *TsFile) FileWrite(filePath string, data []byte) (err error) {
 
@@ -164,13 +158,4 @@ func (tf *TsFile) AbsPath(filePath string) string {
 	}
 
 	return fullPath
-}
-
-// IsDir 是否目录(且存在)
-func (tf *TsFile) IsDir(filePath string) bool {
-	f, err := os.Lstat(filePath)
-	if os.IsNotExist(err) || nil != err {
-		return false
-	}
-	return f.IsDir()
 }

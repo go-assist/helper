@@ -129,7 +129,7 @@ func TestIsWhole(t *testing.T) {
 
 func TestInRangeFloat32(t *testing.T) {
 	for _, test := range exampleFloatTests {
-		actual := TFloat.InRangeFloat32(test.param, test.left, test.right)
+		actual := TFloat.IsRangeFloat32(test.param, test.left, test.right)
 		if actual != test.expected {
 			t.Errorf("Expected InRangeFloat32(%v, %v, %v) to be %v, got %v", test.param, test.left, test.right, test.expected, actual)
 		}
@@ -138,7 +138,7 @@ func TestInRangeFloat32(t *testing.T) {
 
 func TestInRangeFloat64(t *testing.T) {
 	for _, test := range exampleFloatTests {
-		actual := TFloat.InRangeFloat64(float64(test.param), float64(test.left), float64(test.right))
+		actual := TFloat.IsRangeFloat64(float64(test.param), float64(test.left), float64(test.right))
 		if actual != test.expected {
 			t.Errorf("Expected InRangeFloat64(%v, %v, %v) to be %v, got %v", test.param, test.left, test.right, test.expected, actual)
 		}

@@ -59,62 +59,6 @@ func (tf *TsFloat) MinFloat64(nums ...float64) (minFloat float64) {
 	return
 }
 
-// IsNegative 数值是否为负数.
-func (tf *TsFloat) IsNegative(value float64) bool {
-	return value < 0
-}
-
-// IsPositive 数值是否为正数.
-func (tf *TsFloat) IsPositive(value float64) bool {
-	return value > 0
-}
-
-// IsNonNegative 数值是否为非负数.
-func (tf *TsFloat) IsNonNegative(value float64) bool {
-	return value >= 0
-}
-
-// IsNonPositive 数值是否为非正数.
-func (tf *TsFloat) IsNonPositive(value float64) bool {
-	return value <= 0
-}
-
-// IsWhole 数值是否为整数.
-func (tf *TsFloat) IsWhole(value float64) bool {
-	return math.Remainder(value, 1) == 0
-}
-
-// InRangeFloat32 数值是否在2个32位浮点数范围内.
-func (tf *TsFloat) InRangeFloat32(value, left, right float32) bool {
-	if left > right {
-		left, right = right, left
-	}
-	return value >= left && value <= right
-}
-
-// InRangeFloat64 数值是否在2个64位浮点数范围内.
-func (tf *TsFloat) InRangeFloat64(value, left, right float64) bool {
-	if left > right {
-		left, right = right, left
-	}
-	return value >= left && value <= right
-}
-
-// AverageFloat64 对浮点数序列求平均值.
-func (tf *TsFloat) AverageFloat64(nums ...float64) (res float64) {
-	length := len(nums)
-	if length == 0 {
-		return
-	} else if length == 1 {
-		res = nums[0]
-	} else {
-		total := tf.SumFloat64(nums...)
-		res = total / float64(length)
-	}
-
-	return
-}
-
 // SumFloat64 浮点数求和.
 func (tf *TsFloat) SumFloat64(nums ...float64) float64 {
 	var sum float64

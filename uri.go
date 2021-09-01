@@ -38,7 +38,7 @@ func (tu *TsUri) GetQueryParams(mValues map[string][]string, key string) string 
 }
 
 // GetDomain 获取域名
-func (tu *TsUri) GetDomain(str string, isMains ...bool) string {
+func (tu *TsUri) GetDomain(str string, isMains ...bool) (domain string) {
 	u, err := url.Parse(str)
 	isMain := false
 	if len(isMains) > 0 {
@@ -52,9 +52,8 @@ func (tu *TsUri) GetDomain(str string, isMains ...bool) string {
 	}
 
 	parts := strings.Split(u.Hostname(), ".")
-	domain := parts[len(parts)-2] + "." + parts[len(parts)-1]
-
-	return domain
+	domain = parts[len(parts)-2] + "." + parts[len(parts)-1]
+	return
 }
 
 // ParseUriQuery 解析uri参数

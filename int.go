@@ -11,24 +11,6 @@ func (ti *TsInt) Abs(n int64) int64 {
 	return (n ^ y) - y
 }
 
-// IsOdd 变量是否奇数.
-func (ti *TsInt) IsOdd(val int) bool {
-	return val%2 != 0
-}
-
-// IsEven 变量是否偶数.
-func (ti *TsInt) IsEven(val int) bool {
-	return val%2 == 0
-}
-
-// InRangeInt 数值是否在2个整数范围内.
-func (ti *TsInt) InRangeInt(value, left, right int) bool {
-	if left > right {
-		left, right = right, left
-	}
-	return value >= left && value <= right
-}
-
 // AverageInt 对整数序列求平均值.
 func (ti *TsInt) AverageInt(nums ...int) (res float64) {
 	length := len(nums)
