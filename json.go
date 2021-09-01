@@ -11,12 +11,12 @@ import (
 )
 
 // ParseJson Json校验.
-func (tj *TsJson) ParseJson(json string) (result gjson.Result, err error) {
-	if !gjson.Valid(json) {
+func (tj *TsJson) ParseJson(jsonStr string) (result gjson.Result, err error) {
+	if !gjson.Valid(jsonStr) || !TStr.IsJSON(jsonStr){
 		err = errors.New("invalid json")
 		return
 	}
-	result = gjson.Parse(json)
+	result = gjson.Parse(jsonStr)
 	return
 }
 
@@ -30,7 +30,7 @@ func (tj *TsJson) MapToJson(m map[string]interface{}) string {
 // JsonToMap json 转map.
 func (tj *TsJson) JsonToMap(jsonStr string) map[string]interface{} {
 	var convert map[string]interface{}
-	if jsonStr == "" {
+	if jsonStr == "" || !TStr.IsJSON(jsonStr) {
 		return convert
 	}
 	err := json.Unmarshal([]byte(jsonStr), &convert)
@@ -44,7 +44,7 @@ func (tj *TsJson) JsonToMap(jsonStr string) map[string]interface{} {
 // JsonToMapArr json转map数组.
 func (tj *TsJson) JsonToMapArr(jsonStr string) []map[string]interface{} {
 	var convert []map[string]interface{}
-	if jsonStr == "" {
+	if jsonStr == "" || !TStr.IsJSON(jsonStr){
 		return convert
 	}
 	err := json.Unmarshal([]byte(jsonStr), &convert)
