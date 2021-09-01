@@ -61,3 +61,12 @@ func TestStr2Timestamp(t *testing.T) {
 		return
 	}
 }
+
+func TestGetMonthDays(t *testing.T) {
+	days28 := TTime.GetMonthDays(2)
+	days31 := TTime.GetMonthDays(3)
+	days29 := TTime.GetMonthDays(2, 2000)
+	if days28 != 28 || days31 != 31 || days29 != 29 {
+		t.Error("GetMonthDays errors")
+	}
+}

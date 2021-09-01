@@ -13,8 +13,8 @@ import (
 )
 
 // InArray 元素是否在数组(切片/字典)内.
-func (ta *TsArr) InArray(needle interface{}, haystack interface{}) bool {
-	val := reflect.ValueOf(haystack)
+func (ta *TsArr) InArray(needle interface{}, arr interface{}) bool {
+	val := reflect.ValueOf(arr)
 	switch val.Kind() {
 	case reflect.Array, reflect.Slice:
 		for i := 0; i < val.Len(); i++ {
@@ -29,9 +29,8 @@ func (ta *TsArr) InArray(needle interface{}, haystack interface{}) bool {
 			}
 		}
 	default:
-		panic("[InArray]haystack type must be array, slice or map")
+		panic("[InArray]arr type must be array, slice or map")
 	}
-
 	return false
 }
 
@@ -41,56 +40,56 @@ func (ta *TsArr) ArrayFill(value interface{}, num int) []interface{} {
 		return nil
 	}
 
-	var res = make([]interface{}, num)
+	var fillArr = make([]interface{}, num)
 	for i := 0; i < num; i++ {
-		res[i] = value
+		fillArr[i] = value
 	}
 
-	return res
+	return fillArr
 }
 
 // ArrayFlip 交换数组中的键和值.
 func (ta *TsArr) ArrayFlip(arr interface{}) map[interface{}]interface{} {
-	res := make(map[interface{}]interface{})
+	flipArr := make(map[interface{}]interface{})
 	val := reflect.ValueOf(arr)
 	switch val.Kind() {
 	case reflect.Array, reflect.Slice:
 		for i := 0; i < val.Len(); i++ {
 			if val.Index(i).Interface() != nil && fmt.Sprintf("%v", val.Index(i).Interface()) != "" {
-				res[val.Index(i).Interface()] = i
+				flipArr[val.Index(i).Interface()] = i
 			}
 		}
 	case reflect.Map:
 		for _, k := range val.MapKeys() {
 			if val.MapIndex(k).Interface() != nil && fmt.Sprintf("%v", val.MapIndex(k).Interface()) != "" {
-				res[val.MapIndex(k).Interface()] = k
+				flipArr[val.MapIndex(k).Interface()] = k
 			}
 		}
 	default:
 		panic("[ArrayFlip]arr type must be array, slice or map")
 	}
 
-	return res
+	return flipArr
 }
 
 // ArrayKeys 返回数组中所有的键名.
 func (ta *TsArr) ArrayKeys(arr interface{}) []interface{} {
 	val := reflect.ValueOf(arr)
-	res := make([]interface{}, val.Len())
+	keys := make([]interface{}, val.Len())
 	switch val.Kind() {
 	case reflect.Array, reflect.Slice:
 		for i := 0; i < val.Len(); i++ {
-			res[i] = i
+			keys[i] = i
 		}
 	case reflect.Map:
 		for i, k := range val.MapKeys() {
-			res[i] = k
+			keys[i] = k
 		}
 	default:
 		panic("[arrayValuesHelper]arr type must be array, slice or map")
 	}
 
-	return res
+	return keys
 }
 
 // ArrayValues 返回数组(切片/字典)中所有的值.
@@ -101,66 +100,64 @@ func (ta *TsArr) ArrayValues(arr interface{}, filterNil bool) []interface{} {
 
 // MergeSlice 合并一个或多个数组/切片.
 // filterNil是否过滤空元素(nil,''),true时排除空元素,false时保留空元素;ss是元素为数组/切片的数组.
-func (ta *TsArr) MergeSlice(filterNil bool, ss ...interface{}) []interface{} {
-	var res []interface{}
-	switch len(ss) {
+func (ta *TsArr) MergeSlice(filterNil bool, arr ...interface{}) []interface{} {
+	var merge []interface{}
+	switch len(arr) {
 	case 0:
 		break
 	default:
 		n := 0
-		for i, v := range ss {
+		for i, v := range arr {
 			chkLen := isArrayOrSliceHelper(v, 3)
 			if chkLen == -1 {
-				msg := fmt.Sprintf("[MergeSlice]ss type must be array or slice, but [%d]th item not is.", i)
-				panic(msg)
+				panic(fmt.Sprintf("[MergeSlice]ss type must be array or slice, but [%d]th item not is.", i))
 			} else {
 				n += chkLen
 			}
 		}
-		res = make([]interface{}, 0, n)
+		merge = make([]interface{}, 0, n)
 		var item interface{}
-		for _, v := range ss {
+		for _, v := range arr {
 			val := reflect.ValueOf(v)
 			switch val.Kind() {
 			case reflect.Array, reflect.Slice:
 				for i := 0; i < val.Len(); i++ {
 					item = val.Index(i).Interface()
 					if !filterNil || (filterNil && item != nil && fmt.Sprintf("%v", item) != "") {
-						res = append(res, item)
+						merge = append(merge, item)
 					}
 				}
 			}
 		}
 	}
-	return res
+	return merge
 }
 
 // MergeMap 合并字典.
 // 相同的键名时,后面的值将覆盖前一个值;key2Str是否将键转换为字符串;ss是元素为字典的数组.
-func (ta *TsArr) MergeMap(key2Str bool, ss ...interface{}) map[interface{}]interface{} {
-	res := make(map[interface{}]interface{})
-	switch len(ss) {
+func (ta *TsArr) MergeMap(key2Str bool, arr ...interface{}) map[interface{}]interface{} {
+	m := make(map[interface{}]interface{})
+	switch len(arr) {
 	case 0:
 		break
 	default:
-		for i, v := range ss {
+		for i, v := range arr {
 			val := reflect.ValueOf(v)
 			switch val.Kind() {
 			case reflect.Map:
 				for _, k := range val.MapKeys() {
 					if key2Str {
-						res[k.String()] = val.MapIndex(k).Interface()
+						m[k.String()] = val.MapIndex(k).Interface()
 					} else {
-						res[k] = val.MapIndex(k).Interface()
+						m[k] = val.MapIndex(k).Interface()
 					}
 				}
 			default:
-				msg := fmt.Sprintf("[MergeMap]ss type must be map, but [%d]th item not is.", i)
-				panic(msg)
+				panic(fmt.Sprintf("[MergeMap]ss type must be map, but [%d]th item not is.", i))
 			}
 		}
 	}
-	return res
+	return m
 }
 
 // ArrayChunk 将一个数组分割成多个,size为每个子数组的长度.
@@ -178,7 +175,7 @@ func (ta *TsArr) ArrayChunk(arr interface{}, size int) [][]interface{} {
 		}
 
 		chunks := int(math.Ceil(float64(length) / float64(size)))
-		var res [][]interface{}
+		var chunk [][]interface{}
 		var item []interface{}
 		var start int
 		for i, end := 0, 0; chunks > 0; chunks-- {
@@ -193,13 +190,13 @@ func (ta *TsArr) ArrayChunk(arr interface{}, size int) [][]interface{} {
 				item = append(item, val.Index(start).Interface())
 			}
 			if item != nil {
-				res = append(res, item)
+				chunk = append(chunk, item)
 			}
 
 			i++
 		}
 
-		return res
+		return chunk
 	default:
 		panic("[ArrayChunk]arr type must be array or slice")
 	}
@@ -294,15 +291,15 @@ func (ta *TsArr) ArrayRand(arr interface{}, num int) []interface{} {
 			num = length
 		}
 		r := rand.New(rand.NewSource(time.Now().UnixNano()))
-		res := make([]interface{}, num)
+		randArr := make([]interface{}, num)
 		for i, v := range r.Perm(length) {
 			if i < num {
-				res[i] = val.Index(v).Interface()
+				randArr[i] = val.Index(v).Interface()
 			} else {
 				break
 			}
 		}
-		return res
+		return randArr
 	default:
 		panic("[ArrayRand]arr type must be array or slice")
 	}
@@ -312,7 +309,7 @@ func (ta *TsArr) ArrayRand(arr interface{}, num int) []interface{} {
 // arr的元素必须是字典;该方法效率低,因为嵌套了两层反射和遍历.
 func (ta *TsArr) ArrayColumn(arr interface{}, columnKey string) []interface{} {
 	val := reflect.ValueOf(arr)
-	var res []interface{}
+	var column []interface{}
 	var item interface{}
 	switch val.Kind() {
 	case reflect.Array, reflect.Slice:
@@ -323,7 +320,7 @@ func (ta *TsArr) ArrayColumn(arr interface{}, columnKey string) []interface{} {
 			case reflect.Map:
 				for _, subKey := range itemVal.MapKeys() {
 					if fmt.Sprintf("%s", subKey) == columnKey {
-						res = append(res, itemVal.MapIndex(subKey).Interface())
+						column = append(column, itemVal.MapIndex(subKey).Interface())
 						break
 					}
 				}
@@ -339,7 +336,7 @@ func (ta *TsArr) ArrayColumn(arr interface{}, columnKey string) []interface{} {
 			case reflect.Map:
 				for _, subKey := range itemVal.MapKeys() {
 					if fmt.Sprintf("%s", subKey) == columnKey {
-						res = append(res, itemVal.MapIndex(subKey).Interface())
+						column = append(column, itemVal.MapIndex(subKey).Interface())
 						break
 					}
 				}
@@ -351,40 +348,42 @@ func (ta *TsArr) ArrayColumn(arr interface{}, columnKey string) []interface{} {
 		panic("[ArrayColumn]arr type must be array, slice or map")
 	}
 
-	return res
+	return column
 }
 
 // ArrayPush 将一个或多个元素压入数组的末尾(入栈),返回处理之后数组的元素个数.
-func (ta *TsArr) ArrayPush(s *[]interface{}, elements ...interface{}) int {
+func (ta *TsArr) ArrayPush(s *[]interface{}, elements ...interface{}) (length int) {
 	*s = append(*s, elements...)
-	return len(*s)
+	length = len(*s)
+	return
 }
 
 // ArrayPop 弹出数组最后一个元素(出栈),并返回该元素.
-func (ta *TsArr) ArrayPop(s *[]interface{}) interface{} {
+func (ta *TsArr) ArrayPop(s *[]interface{}) (pop interface{}) {
 	if len(*s) == 0 {
 		return nil
 	}
 	ep := len(*s) - 1
-	e := (*s)[ep]
+	pop= (*s)[ep]
 	*s = (*s)[:ep]
-	return e
+	return
 }
 
 // ArrayUnshift 在数组开头插入一个或多个元素,返回处理之后数组的元素个数.
-func (ta *TsArr) ArrayUnshift(s *[]interface{}, elements ...interface{}) int {
+func (ta *TsArr) ArrayUnshift(s *[]interface{}, elements ...interface{}) (length int) {
 	*s = append(elements, *s...)
-	return len(*s)
+	length = len(*s)
+	return
 }
 
 // ArrayShift 将数组开头的元素移出数组,并返回该元素.
-func (ta *TsArr) ArrayShift(s *[]interface{}) interface{} {
+func (ta *TsArr) ArrayShift(s *[]interface{}) (shift interface{}) {
 	if len(*s) == 0 {
 		return nil
 	}
-	e := (*s)[0]
+	shift = (*s)[0]
 	*s = (*s)[1:]
-	return e
+	return
 }
 
 // ArrayKeyExists 检查数组里是否有指定的键名或索引.
@@ -424,16 +423,16 @@ func (ta *TsArr) ArrayReverse(arr interface{}) []interface{} {
 	switch val.Kind() {
 	case reflect.Array, reflect.Slice:
 		length := val.Len()
-		res := make([]interface{}, length)
+		reverse := make([]interface{}, length)
 		i, j := 0, length-1
 		for ; i < j; i, j = i+1, j-1 {
-			res[i], res[j] = val.Index(j).Interface(), val.Index(i).Interface()
+			reverse[i], reverse[j] = val.Index(j).Interface(), val.Index(i).Interface()
 		}
-		if length > 0 && res[j] == nil {
-			res[j] = val.Index(j).Interface()
+		if length > 0 && reverse[j] == nil {
+			reverse[j] = val.Index(j).Interface()
 		}
 
-		return res
+		return reverse
 	default:
 		panic("[ArrayReverse]arr type must be array, slice")
 	}
@@ -477,7 +476,7 @@ func (ta *TsArr) Implode(delimiter string, arr interface{}) string {
 }
 
 // JoinStrings 使用分隔符delimiter连接字符串数组.效率比Implode高.
-func (ta *TsArr) JoinStrings(strArr []string, delimiter string) (res string) {
+func (ta *TsArr) JoinStrings(strArr []string, delimiter string) (join string) {
 	length := len(strArr)
 	if length == 0 {
 		return
@@ -490,13 +489,12 @@ func (ta *TsArr) JoinStrings(strArr []string, delimiter string) (res string) {
 			sb.WriteString(delimiter)
 		}
 	}
-	res = sb.String()
-
+	join = sb.String()
 	return
 }
 
 // JoinIntArr 使用分隔符delimiter连接整数数组.
-func (ta *TsArr) JoinIntArr(intArr []int, delimiter string) (res string) {
+func (ta *TsArr) JoinIntArr(intArr []int, delimiter string) (join string) {
 	length := len(intArr)
 	if length == 0 {
 		return
@@ -509,18 +507,18 @@ func (ta *TsArr) JoinIntArr(intArr []int, delimiter string) (res string) {
 			sb.WriteString(delimiter)
 		}
 	}
-	res = sb.String()
+	join = sb.String()
 
 	return
 }
 
 // UniqueIntArr 移除整数数组中的重复值.
-func (ta *TsArr) UniqueIntArr(intArr []int) (res []int) {
+func (ta *TsArr) UniqueIntArr(intArr []int) (unique []int) {
 	sort.Ints(intArr)
 	var last int
 	for i, num := range intArr {
 		if i == 0 || num != last {
-			res = append(res, num)
+			unique = append(unique, num)
 		}
 		last = num
 	}
@@ -528,24 +526,24 @@ func (ta *TsArr) UniqueIntArr(intArr []int) (res []int) {
 }
 
 // Unique64IntArr 移除64位整数数组中的重复值.
-func (ta *TsArr) Unique64IntArr(intArr []int64) (res []int64) {
+func (ta *TsArr) Unique64IntArr(intArr []int64) (unique []int64) {
 	seen := make(map[int64]bool)
 	for _, num := range intArr {
 		if _, ok := seen[num]; !ok {
 			seen[num] = true
-			res = append(res, num)
+			unique = append(unique, num)
 		}
 	}
 	return
 }
 
 // UniqueStringsArr 移除字符串数组中的重复值.
-func (ta *TsArr) UniqueStringsArr(strArr []string) (res []string) {
+func (ta *TsArr) UniqueStringsArr(strArr []string) (unique []string) {
 	sort.Strings(strArr)
 	var last string
 	for _, str := range strArr {
 		if str != last {
-			res = append(res, str)
+			unique = append(unique, str)
 		}
 		last = str
 	}
@@ -554,9 +552,9 @@ func (ta *TsArr) UniqueStringsArr(strArr []string) (res []string) {
 }
 
 // ArrayDiff 计算数组(数组/切片/字典)的差集,返回在 arr1 中但是不在 arr2 里,且非空元素(nil,'')的值.
-func (ta *TsArr) ArrayDiff(arr1, arr2 interface{}) []interface{} {
-	valA := reflect.ValueOf(arr1)
-	valB := reflect.ValueOf(arr2)
+func (ta *TsArr) ArrayDiff(arrCompare, arrToBeCompare interface{}) []interface{} {
+	valA := reflect.ValueOf(arrCompare)
+	valB := reflect.ValueOf(arrToBeCompare)
 	var diffArr []interface{}
 	var item interface{}
 	var notInB bool
@@ -566,7 +564,7 @@ func (ta *TsArr) ArrayDiff(arr1, arr2 interface{}) []interface{} {
 		if valA.Len() == 0 {
 			return nil
 		} else if valB.Len() == 0 {
-			return ta.arrayValuesHelper(arr1, true)
+			return ta.arrayValuesHelper(arrCompare, true)
 		}
 
 		for i := 0; i < valA.Len(); i++ {
@@ -588,7 +586,7 @@ func (ta *TsArr) ArrayDiff(arr1, arr2 interface{}) []interface{} {
 		if valA.Len() == 0 {
 			return nil
 		} else if len(valB.MapKeys()) == 0 {
-			return ta.arrayValuesHelper(arr1, true)
+			return ta.arrayValuesHelper(arrCompare, true)
 		}
 
 		for i := 0; i < valA.Len(); i++ {
@@ -610,7 +608,7 @@ func (ta *TsArr) ArrayDiff(arr1, arr2 interface{}) []interface{} {
 		if len(valA.MapKeys()) == 0 {
 			return nil
 		} else if valB.Len() == 0 {
-			return ta.arrayValuesHelper(arr1, true)
+			return ta.arrayValuesHelper(arrCompare, true)
 		}
 
 		for _, k := range valA.MapKeys() {
@@ -632,7 +630,7 @@ func (ta *TsArr) ArrayDiff(arr1, arr2 interface{}) []interface{} {
 		if len(valA.MapKeys()) == 0 {
 			return nil
 		} else if len(valB.MapKeys()) == 0 {
-			return ta.arrayValuesHelper(arr1, true)
+			return ta.arrayValuesHelper(arrCompare, true)
 		}
 
 		for _, k := range valA.MapKeys() {
@@ -657,9 +655,8 @@ func (ta *TsArr) ArrayDiff(arr1, arr2 interface{}) []interface{} {
 }
 
 // ArrayUnique 移除数组中重复的值.
-func (ta *TsArr) ArrayUnique(arr interface{}) []interface{} {
+func (ta *TsArr) ArrayUnique(arr interface{}) (unique []interface{}) {
 	val := reflect.ValueOf(arr)
-	var res []interface{}
 	var item interface{}
 	var str, key string
 	mp := make(map[string]interface{})
@@ -671,7 +668,7 @@ func (ta *TsArr) ArrayUnique(arr interface{}) []interface{} {
 			key = string(TStr.Md5Hex([]byte(str), 32))
 			if _, ok := mp[key]; !ok {
 				mp[key] = true
-				res = append(res, item)
+				unique = append(unique, item)
 			}
 		}
 	case reflect.Map:
@@ -681,19 +678,19 @@ func (ta *TsArr) ArrayUnique(arr interface{}) []interface{} {
 			key = string(TStr.Md5Hex([]byte(str), 32))
 			if _, ok := mp[key]; !ok {
 				mp[key] = true
-				res = append(res, item)
+				unique = append(unique, item)
 			}
 		}
 	default:
 		panic("[ArrayUnique]arr type must be array, slice or map")
 	}
 
-	return res
+	return
 }
 
 // ArraySearchItem 从数组中搜索对应元素(单个).
 // arr为要查找的数组,condition为条件字典.
-func (ta *TsArr) ArraySearchItem(arr interface{}, condition map[string]interface{}) (res interface{}) {
+func (ta *TsArr) ArraySearchItem(arr interface{}, condition map[string]interface{}) (search interface{}) {
 	// 条件为空
 	if len(condition) == 0 {
 		return
@@ -703,15 +700,15 @@ func (ta *TsArr) ArraySearchItem(arr interface{}, condition map[string]interface
 	switch val.Kind() {
 	case reflect.Array, reflect.Slice:
 		for i := 0; i < val.Len(); i++ {
-			res = ta.compareConditionHelper(condition, val.Index(i).Interface())
-			if res != nil {
+			search = ta.compareConditionHelper(condition, val.Index(i).Interface())
+			if search != nil {
 				return
 			}
 		}
 	case reflect.Map:
 		for _, k := range val.MapKeys() {
-			res = ta.compareConditionHelper(condition, val.MapIndex(k).Interface())
-			if res != nil {
+			search = ta.compareConditionHelper(condition, val.MapIndex(k).Interface())
+			if search != nil {
 				return
 			}
 		}
@@ -724,7 +721,7 @@ func (ta *TsArr) ArraySearchItem(arr interface{}, condition map[string]interface
 
 // ArraySearchMulti 从数组中搜索对应元素(多个).
 // arr为要查找的数组,condition为条件字典.
-func (ta *TsArr) ArraySearchMulti(arr interface{}, condition map[string]interface{}) (res []interface{}) {
+func (ta *TsArr) ArraySearchMulti(arr interface{}, condition map[string]interface{}) (search []interface{}) {
 	// 条件为空
 	if len(condition) == 0 {
 		return
@@ -737,14 +734,14 @@ func (ta *TsArr) ArraySearchMulti(arr interface{}, condition map[string]interfac
 		for i := 0; i < val.Len(); i++ {
 			item = ta.compareConditionHelper(condition, val.Index(i).Interface())
 			if item != nil {
-				res = append(res, item)
+				search = append(search, item)
 			}
 		}
 	case reflect.Map:
 		for _, k := range val.MapKeys() {
 			item = ta.compareConditionHelper(condition, val.MapIndex(k).Interface())
 			if item != nil {
-				res = append(res, item)
+				search = append(search, item)
 			}
 		}
 	default:
@@ -768,8 +765,7 @@ func (ta *TsArr) ArrayCombine(keys, values []interface{}) map[interface{}]interf
 
 // arrayValuesHelper 返回数组/切片/字典中所有的值.
 // filterNil是否过滤空元素(nil,''),true时排除空元素,false时保留空元素.
-func (ta *TsArr) arrayValuesHelper(arr interface{}, filterNil bool) []interface{} {
-	var res []interface{}
+func (ta *TsArr) arrayValuesHelper(arr interface{}, filterNil bool) (values []interface{}) {
 	var item interface{}
 	val := reflect.ValueOf(arr)
 	switch val.Kind() {
@@ -777,25 +773,25 @@ func (ta *TsArr) arrayValuesHelper(arr interface{}, filterNil bool) []interface{
 		for i := 0; i < val.Len(); i++ {
 			item = val.Index(i).Interface()
 			if !filterNil || (filterNil && item != nil && fmt.Sprintf("%v", item) != "") {
-				res = append(res, item)
+				values = append(values, item)
 			}
 		}
 	case reflect.Map:
 		for _, k := range val.MapKeys() {
 			item = val.MapIndex(k).Interface()
 			if !filterNil || (filterNil && item != nil && fmt.Sprintf("%v", item) != "") {
-				res = append(res, item)
+				values = append(values, item)
 			}
 		}
 	default:
 		panic("[arrayValuesHelper]arr type must be array, slice or map")
 	}
 
-	return res
+	return
 }
 
 // compareConditionHelper 比对数组是否匹配条件.condition为条件字典,arr为要比对的数据数组.
-func (ta *TsArr) compareConditionHelper(condition map[string]interface{}, arr interface{}) (res interface{}) {
+func (ta *TsArr) compareConditionHelper(condition map[string]interface{}, arr interface{}) (compare interface{}) {
 	val := reflect.ValueOf(arr)
 	switch val.Kind() {
 	case reflect.Map:
@@ -809,7 +805,7 @@ func (ta *TsArr) compareConditionHelper(condition map[string]interface{}, arr in
 			}
 		}
 		if chkNum == condLen {
-			res = arr
+			compare = arr
 		}
 	default:
 		return

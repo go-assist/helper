@@ -65,6 +65,18 @@ const (
 	CaseLower LetterCase = 1
 	// CaseUpper 检查大写
 	CaseUpper LetterCase = 2
+
+	// RandStringAlpha 随机字符串类型,字母
+	RandStringAlpha RandomString = 0
+	// RandStringNumeric 随机字符串类型,数值
+	RandStringNumeric RandomString = 1
+	// RandStringAluminum 随机字符串类型,字母+数值
+	RandStringAluminum RandomString = 2
+	// RandStringSpecial 随机字符串类型,字母+数值+特殊字符
+	RandStringSpecial RandomString = 3
+	// RandStringChinese 随机字符串类型,仅中文
+	RandStringChinese RandomString = 4
+
 	// CheckConnectTimeout 检查连接超时的时间
 	CheckConnectTimeout = time.Second * 5
 

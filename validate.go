@@ -296,8 +296,8 @@ func (ts *TsStr) IsCreditNo(str string) (bool, string) {
 	}
 
 	// 将15位身份证升级到18位
-	leng := len(str)
-	if leng == 15 {
+	length := len(str)
+	if length == 15 {
 		// 先转为17位,如果身份证顺序码是996 997 998 999,这些是为百岁以上老人的特殊编码
 		if chk, _ = ts.DStrPos(str[12:], []string{"996", "997", "998", "999"}, false); chk {
 			str = str[0:6] + "18" + str[6:]
@@ -321,7 +321,7 @@ func (ts *TsStr) IsCreditNo(str string) (bool, string) {
 	}
 
 	// 18位身份证需要验证最后一位校验位
-	if leng == 18 {
+	if length == 18 {
 		str = strings.ToUpper(str)
 		if str[17] != creditChecksum(str) {
 			return false, ""

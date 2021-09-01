@@ -5,6 +5,8 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"log"
+
 	//"golang.org/x/sys/windows"
 	"io"
 	"io/ioutil"
@@ -49,6 +51,23 @@ type SystemInfo struct {
 	PauseNs      uint64  `json:"pause_ns"`       //上次GC暂停时间,纳秒
 }
 
+// Echo 输出一个或多个字符串.
+func (to *TsOs) Echo(args ...interface{}) {
+	log.Print(args...)
+}
+
+// Exit 输出一条消息,并退出当前脚本.
+func (to *TsOs) Exit(msg interface{}, status int) {
+	log.Println(msg)
+	os.Exit(status)
+}
+
+// Die 函数输出一条消息,并退出当前脚本.
+func (to *TsOs) Die(msg interface{}, status int) {
+	log.Println(msg)
+	os.Exit(status)
+}
+
 // IsWindows 当前操作系统是否Windows.
 func (to *TsOs) IsWindows() bool {
 	return "windows" == runtime.GOOS
@@ -65,8 +84,8 @@ func (to *TsOs) IsMac() bool {
 }
 
 // Pwd 获取当前程序运行所在的路径,注意和GetWorkList有所不同.
-func (to *TsOs) Pwd() string {
-	var dir, ex string
+func (to *TsOs) Pwd() (dir string) {
+	var ex string
 	var err error
 	ex, err = os.Executable()
 	if err == nil {
@@ -74,22 +93,21 @@ func (to *TsOs) Pwd() string {
 		exReal, _ = filepath.Abs(exReal)
 		dir = filepath.Dir(exReal)
 	}
-
-	return dir
+	return
 }
 
-// GetWorkList 取得当前工作目录(程序可能在任务中进行多次目录切换)
-func (to *TsOs) GetWorkList() (string, error) {
-	dir, err := os.Getwd()
-	return dir, err
+// GetWorkList 取得当前工作目录(程序可能在任务中进行多次目录切换).
+func (to *TsOs) GetWorkList() (dir string, err error) {
+	dir, err = os.Getwd()
+	return
 }
 
-// Chdir 改变/进入新的工作目录
+// Chdir 改变/进入新的工作目录.
 func (to *TsOs) Chdir(dir string) error {
 	return os.Chdir(dir)
 }
 
-// HomeDir 获取当前用户的主目录(仅支持Unix-like system)
+// HomeDir 获取当前用户的主目录(仅支持Unix-like system).
 func (to *TsOs) HomeDir() (string, error) {
 	// Unix-like system, so just assume Unix
 	home := os.Getenv("HOME")
@@ -102,38 +120,38 @@ func (to *TsOs) HomeDir() (string, error) {
 	return home, err
 }
 
-// LocalIP 获取本机第一个NIC's IP
+// LocalIP 获取本机第一个NIC's IP.
 func (to *TsOs) LocalIP() (string, error) {
-	res := ""
-	addrs, err := net.InterfaceAddrs()
-	if len(addrs) > 0 {
-		for _, addr := range addrs {
+	ip := ""
+	addrArr, err := net.InterfaceAddrs()
+	if len(addrArr) > 0 {
+		for _, addr := range addrArr {
 			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 				if nil != ipnet.IP.To4() {
-					res = ipnet.IP.String()
+					ip = ipnet.IP.String()
 					break
 				}
 			}
 		}
 	}
 
-	return res, err
+	return ip, err
 }
 
-// OutboundIP 获取本机的出口IP
+// OutboundIP 获取本机的出口IP.
 func (to *TsOs) OutboundIP() (string, error) {
-	res := ""
+	out := ""
 	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if conn != nil {
 		addr := conn.LocalAddr().(*net.UDPAddr)
-		res = addr.IP.String()
+		out = addr.IP.String()
 		_ = conn.Close()
 	}
 
-	return res, err
+	return out, err
 }
 
-// IsPublicIP 是否公网IP
+// IsPublicIP 是否公网IP.
 func (to *TsOs) IsPublicIP(ip net.IP) bool {
 	if ip.IsLoopback() || ip.IsLinkLocalMulticast() || ip.IsLinkLocalUnicast() {
 		return false
@@ -153,7 +171,7 @@ func (to *TsOs) IsPublicIP(ip net.IP) bool {
 	return false
 }
 
-// GetIPs 获取本机的IP列表
+// GetIPs 获取本机的IP列表.
 func (to *TsOs) GetIPs() (ips []string) {
 	interfaceAddrArr, _ := net.InterfaceAddrs()
 	if len(interfaceAddrArr) > 0 {
@@ -170,7 +188,7 @@ func (to *TsOs) GetIPs() (ips []string) {
 	return
 }
 
-// GetMacAddrArr 获取本机的Mac网卡地址列表
+// GetMacAddrArr 获取本机的Mac网卡地址列表.
 func (to *TsOs) GetMacAddrArr() (macAddrArr []string) {
 	netInterfaces, _ := net.Interfaces()
 	if len(netInterfaces) > 0 {
@@ -186,12 +204,12 @@ func (to *TsOs) GetMacAddrArr() (macAddrArr []string) {
 	return
 }
 
-// Hostname 获取主机名
+// Hostname 获取主机名.
 func (to *TsOs) Hostname() (string, error) {
 	return os.Hostname()
 }
 
-// GetIpByHostname 返回主机名对应的 IPv4地址
+// GetIpByHostname 返回主机名对应的 IPv4地址.
 func (to *TsOs) GetIpByHostname(hostname string) (string, error) {
 	ips, err := net.LookupIP(hostname)
 	if ips != nil {
@@ -205,7 +223,7 @@ func (to *TsOs) GetIpByHostname(hostname string) (string, error) {
 	return "", err
 }
 
-// GetIpsByDomain 获取互联网域名/主机名对应的 IPv4 地址列表
+// GetIpsByDomain 获取互联网域名/主机名对应的 IPv4 地址列表.
 func (to *TsOs) GetIpsByDomain(domain string) ([]string, error) {
 	ips, err := net.LookupIP(domain)
 	if ips != nil {
@@ -503,13 +521,13 @@ func (to *TsOs) PrivateCIDR() []*net.IPNet {
 		"fe80::/10",      // link local address IPv6
 	}
 
-	res := make([]*net.IPNet, len(maxCidrBlocks))
+	ipNets := make([]*net.IPNet, len(maxCidrBlocks))
 	for i, maxCidrBlock := range maxCidrBlocks {
 		_, cidr, _ := net.ParseCIDR(maxCidrBlock)
-		res[i] = cidr
+		ipNets[i] = cidr
 	}
 
-	return res
+	return ipNets
 }
 
 // IsPrivateIp 是否私有IP地址(ipv4/ipv6).

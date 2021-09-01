@@ -15,7 +15,6 @@ import (
 // Int2Str 将整数转换为字符串
 func (tc *TsConvert) Int2Str(val interface{}) string {
 	switch val.(type) {
-	// Integers
 	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64:
 		return fmt.Sprintf("%d", val)
 	// Type is not integers, return empty string
@@ -27,7 +26,6 @@ func (tc *TsConvert) Int2Str(val interface{}) string {
 // Float2Str 将浮点数转换为字符串,decimal为小数位数.
 func (tc *TsConvert) Float2Str(val interface{}, decimal int) string {
 	switch val.(type) {
-	// Floats
 	case float32:
 		return strconv.FormatFloat(float64(val.(float32)), 'f', decimal, 32)
 	case float64:
@@ -57,23 +55,23 @@ func (tc *TsConvert) Bool2Int(val bool) int {
 // Str2IntStrict 严格将字符串转换为有符号整型.
 // bitSize为类型位数,strict为是否严格检查.
 func (tc *TsConvert) Str2IntStrict(val string, bitSize int, strict bool) int64 {
-	res, err := strconv.ParseInt(val, 0, bitSize)
+	integer, err := strconv.ParseInt(val, 0, bitSize)
 	if err != nil {
 		if strict {
 			panic(err)
 		}
 	}
-	return res
+	return integer
 }
 
 // Str2Int 将字符串转换为int.其中"true", "TRUE", "True"为1.
-func (tc *TsConvert) Str2Int(val string) (res int) {
+func (tc *TsConvert) Str2Int(val string) (integer int) {
 	if val == "true" || val == "TRUE" || val == "True" {
-		res = 1
+		integer = 1
 		return
 	}
 
-	res, _ = strconv.Atoi(val)
+	integer, _ = strconv.Atoi(val)
 	return
 }
 
@@ -99,13 +97,13 @@ func (tc *TsConvert) Str2Int64(val string) int64 {
 
 // Str2UintStrict 严格将字符串转换为无符号整型,bitSize为类型位数,strict为是否严格检查
 func (tc *TsConvert) Str2UintStrict(val string, bitSize int, strict bool) uint64 {
-	res, err := strconv.ParseUint(val, 0, bitSize)
+	uInteger, err := strconv.ParseUint(val, 0, bitSize)
 	if err != nil {
 		if strict {
 			panic(err)
 		}
 	}
-	return res
+	return uInteger
 }
 
 // Str2Uint 将字符串转换为uint.
@@ -130,19 +128,19 @@ func (tc *TsConvert) Str2Uint32(val string) uint32 {
 
 // Str2Uint64 将字符串转换为uint64.
 func (tc *TsConvert) Str2Uint64(val string) uint64 {
-	return uint64(tc.Str2UintStrict(val, 64, false))
+	return tc.Str2UintStrict(val, 64, false)
 }
 
 // Str2FloatStrict 严格将字符串转换为浮点型.
 // bitSize为类型位数,strict为是否严格检查.
 func (tc *TsConvert) Str2FloatStrict(val string, bitSize int, strict bool) float64 {
-	res, err := strconv.ParseFloat(val, bitSize)
+	parseFloat, err := strconv.ParseFloat(val, bitSize)
 	if err != nil {
 		if strict {
 			panic(err)
 		}
 	}
-	return res
+	return parseFloat
 }
 
 // Str2Float32 将字符串转换为float32.
@@ -151,11 +149,11 @@ func (tc *TsConvert) Str2Float32(val string) float32 {
 }
 
 // Str2Float64 将字符串转换为float64.其中"true", "TRUE", "True"为1.0 .
-func (tc *TsConvert) Str2Float64(val string) (res float64) {
+func (tc *TsConvert) Str2Float64(val string) (parseFloat float64) {
 	if val == "true" || val == "TRUE" || val == "True" {
-		res = 1.0
+		parseFloat = 1.0
 	} else {
-		res = tc.Str2FloatStrict(val, 64, false)
+		parseFloat = tc.Str2FloatStrict(val, 64, false)
 	}
 
 	return
@@ -164,11 +162,10 @@ func (tc *TsConvert) Str2Float64(val string) (res float64) {
 // Str2Bool 将字符串转换为布尔值.
 // 1, t, T, TRUE, true, True 等字符串为真.
 // 0, f, F, FALSE, false, False 等字符串为假.
-func (tc *TsConvert) Str2Bool(val string) (res bool) {
+func (tc *TsConvert) Str2Bool(val string) (parseBool bool) {
 	if val != "" {
-		res, _ = strconv.ParseBool(val)
+		parseBool, _ = strconv.ParseBool(val)
 	}
-
 	return
 }
 
@@ -236,7 +233,7 @@ func (tc *TsConvert) Hex2Dec(str string) (int64, error) {
 		start = 2
 	}
 
-	// bitSize 表示结果的位宽（包括符号位），0 表示最大位宽
+	// bitSize 表示结果的位宽(包括符号位),0 表示最大位宽
 	return strconv.ParseInt(str[start:], 16, 0)
 }
 
@@ -360,7 +357,7 @@ func (tc *TsConvert) ToBool(val interface{}) bool {
 	}
 }
 
-// ToInt 强制将变量转换为整型;其中true或"true"为1.
+// ToInt 强制将变量转换为整型;其中true 或 "true"为1.
 func (tc *TsConvert) ToInt(val interface{}) int {
 	switch val.(type) {
 	case int:
@@ -439,12 +436,11 @@ func (tc *TsConvert) ToFloat(val interface{}) (res float64) {
 }
 
 // Float64ToByte 64位浮点数转字节切片.
-func (tc *TsConvert) Float64ToByte(val float64) []byte {
+func (tc *TsConvert) Float64ToByte(val float64) (parseFloat []byte) {
 	bits := math.Float64bits(val)
-	res := make([]byte, 8)
-	binary.LittleEndian.PutUint64(res, bits)
-
-	return res
+	parseFloat = make([]byte, 8)
+	binary.LittleEndian.PutUint64(parseFloat, bits)
+	return
 }
 
 // Byte2Float64 字节切片转64位浮点数.
@@ -456,10 +452,10 @@ func (tc *TsConvert) Byte2Float64(bytes []byte) float64 {
 
 // Int64ToByte 64位整型转字节切片.
 func (tc *TsConvert) Int64ToByte(val int64) []byte {
-	res := make([]byte, 8)
-	binary.BigEndian.PutUint64(res, uint64(val))
+	parseByte := make([]byte, 8)
+	binary.BigEndian.PutUint64(parseByte, uint64(val))
 
-	return res
+	return parseByte
 }
 
 // Byte2Int64 字节切片转64位整型.
@@ -473,13 +469,13 @@ func (tc *TsConvert) Byte2Hex(val []byte) string {
 }
 
 // Hex2Byte 16进制字符串转字节切片.
-func (tc *TsConvert) Hex2Byte(str string) []byte {
-	h, _ := hex.DecodeString(str)
-	return h
+func (tc *TsConvert) Hex2Byte(str string) (parseHex []byte) {
+	parseHex, _ = hex.DecodeString(str)
+	return
 }
 
 // GetPointerAddrInt 获取变量指针地址整型值.variable为变量.
-func (tc *TsConvert) GetPointerAddrInt(variable interface{}) int64 {
-	res, _ := tc.Hex2Dec(fmt.Sprintf("%p", &variable))
-	return res
+func (tc *TsConvert) GetPointerAddrInt(variable interface{}) (addr int64) {
+	addr, _ = tc.Hex2Dec(fmt.Sprintf("%p", &variable))
+	return
 }

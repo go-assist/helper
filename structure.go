@@ -18,4 +18,5 @@ type (
 	TsEncrypt byte
 	CallBack func() // CallBack 回调执行函数,无参数且无返回值
 	LetterCase uint8
+	RandomString uint8
 )

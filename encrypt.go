@@ -29,11 +29,11 @@ func (te *TsEncrypt) Base64Decode(str string) ([]byte, error) {
 		str += "="
 	}
 
-	data, err := base64.StdEncoding.DecodeString(str)
+	decodeString, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
 		return nil, err
 	}
-	return data, nil
+	return decodeString, nil
 }
 
 // Base64UrlEncode Base64UrlSafeEncode url安全的Base64Encode,没有'/'和'+'及结尾的'=' .
@@ -55,10 +55,10 @@ func (te *TsEncrypt) Base64UrlDecode(data string) ([]byte, error) {
 
 // AuthCode 授权码编码或解码;encode为true时编码,为false解码;expiry为有效期,秒;返回结果为加密/解密的字符串和有效期时间戳.
 func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (string, int64) {
-	// DYNAMIC_KEY_LEN 动态密钥长度，相同的明文会生成不同密文就是依靠动态密钥
-	// 加入随机密钥，可以令密文无任何规律，即便是原文和密钥完全相同，加密结果也会每次不同，增大破解难度。
-	// 取值越大，密文变动规律越大，密文变化 = 16 的 DYNAMIC_KEY_LEN 次方
-	// 当此值为 0 时，则不产生随机密钥
+	// DYNAMIC_KEY_LEN 动态密钥长度,相同的明文会生成不同密文就是依靠动态密钥
+	// 加入随机密钥,可以令密文无任何规律,即便是原文和密钥完全相同,加密结果也会每次不同,增大破解难度。
+	// 取值越大,密文变动规律越大,密文变化 = 16 的 DYNAMIC_KEY_LEN 次方
+	// 当此值为 0 时,则不产生随机密钥
 
 	if str == "" {
 		return "", 0
@@ -90,8 +90,8 @@ func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (strin
 	keyD := TStr.Md5Hex(append(keyA, keyC...), 32)
 	encryptionKey := append(keyA, keyD...)
 	keyLength := len(encryptionKey)
-	// 明文，前10位用来保存时间戳，解密时验证数据有效性，10到26位用来保存keyB(密钥b)，解密时会通过这个密钥验证数据完整性
-	// 如果是解码的话，会从第 DYNAMIC_KEY_LEN 位开始，因为密文前 DYNAMIC_KEY_LEN 位保存 动态密钥，以保证解密正确
+	// 明文,前10位用来保存时间戳,解密时验证数据有效性,10到26位用来保存keyB(密钥b),解密时会通过这个密钥验证数据完整性
+	// 如果是解码的话,会从第 DYNAMIC_KEY_LEN 位开始,因为密文前 DYNAMIC_KEY_LEN 位保存 动态密钥,以保证解密正确
 	if encode == false {
 		strByte, err := te.Base64UrlDecode(str[DynamicKeyLen:])
 		if err != nil {
@@ -116,7 +116,7 @@ func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (strin
 		rndKey[i] = int(encryptionKey[i%keyLength])
 		box[i] = i
 	}
-	// 用固定的算法，打乱密钥簿，增加随机性，好像很复杂，实际上并不会增加密文的强度
+	// 用固定的算法,打乱密钥簿,增加随机性,好像很复杂,实际上并不会增加密文的强度
 	for i = 0; i < 256; i++ {
 		j = (j + box[i] + rndKey[i]) % 256
 		box[i], box[j] = box[j], box[i]
@@ -128,7 +128,7 @@ func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (strin
 		a = (a + 1) % 256
 		j = (j + box[a]) % 256
 		box[a], box[j] = box[j], box[a]
-		// 从密钥簿得出密钥进行异或，再转成字符
+		// 从密钥簿得出密钥进行异或,再转成字符
 		resData = append(resData, byte(int(str[i])^box[(box[a]+box[j])%256]))
 	}
 	result := string(resData)
@@ -136,7 +136,7 @@ func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (strin
 		// substr($result, 0, 10) == 0 验证数据有效性
 		// substr($result, 0, 10) - time() > 0 验证数据有效性
 		// substr($result, 10, 16) == substr(md5(substr($result, 26).$keyB), 0, 16) 验证数据完整性
-		// 验证数据有效性，请看未加密明文的格式
+		// 验证数据有效性,请看未加密明文的格式
 		if len(result) <= 26 {
 			return "", 0
 		}
@@ -148,7 +148,7 @@ func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (strin
 			return "", expTime
 		}
 	} else { //加密
-		// 把动态密钥保存在密文里，这也是为什么同样的明文，生产不同密文后能解密的原因
+		// 把动态密钥保存在密文里,这也是为什么同样的明文,生产不同密文后能解密的原因
 		result = string(keyC) + te.Base64UrlEncode(resData)
 		return result, expiry
 	}
@@ -202,8 +202,7 @@ func (te *TsEncrypt) EasyEncrypt(data, key string) string {
 		x++
 	}
 
-	res := string(keyByte[:DynamicKeyLen]) + te.Base64UrlEncode(str)
-	return res
+	return string(keyByte[:DynamicKeyLen]) + te.Base64UrlEncode(str)
 }
 
 // EasyDecrypt 简单解密.
@@ -268,8 +267,6 @@ func (te *TsEncrypt) HmacShaX(data, secret []byte, x uint16) string {
 	h.Write(data)
 
 	// Get result and encode as hexadecimal string
-	sha := hex.EncodeToString(h.Sum(nil))
-
-	return sha
+	return hex.EncodeToString(h.Sum(nil))
 }
 
