@@ -3,11 +3,49 @@
 
 
 ##### 2.一些常用的助手函数工具包
+包含:
 
-##### 3.获取 
-go get -u github.com/golangtoolkit
+字符串 (TStr)
 
-##### 4. 示例 for example
+数组 (TArr)
+
+整型 (TInt)
+
+浮点型 (TFloat)
+
+文件 (TFile)
+
+url (TUri)
+
+hash (THash)
+
+动态调用方法 (TCallFunc)
+
+debug (TDebug)
+
+os (TOs)
+
+类型转换 (TConv)
+
+时间 (TTime)
+
+定时任务 (TCorn)
+
+uuid (TUuid)
+
+json (TJson)
+
+加解密 (TEncrypt)
+
+以上操作
+
+##### 3.获取![image](https://user-images.githubusercontent.com/89840349/131662210-8f61481b-52d2-4e21-a993-fb3396cd19f6.png)
+
+go get github.com/golangtoolkit/helper
+
+##### 4. 示例 ![image](https://user-images.githubusercontent.com/89840349/131662297-c65a4fb6-2e5d-4b99-a924-580b1e3a74c0.png)
+for example![image](https://user-images.githubusercontent.com/89840349/131662284-ae107447-b787-4b9b-8604-0c0f06254123.png)
+
 ```Golang
 package helper
 
