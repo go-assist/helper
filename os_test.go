@@ -196,10 +196,10 @@ func BenchmarkGetIPs(b *testing.B) {
 	}
 }
 
-func TestGetMacAddrs(t *testing.T) {
+func TestGetMacAddrArr(t *testing.T) {
 	macs := TOs.GetMacAddrArr()
 	if len(macs) == 0 {
-		t.Error("GetMacAddrs fail")
+		t.Error("GetMacAddrArr fail")
 		return
 	}
 }
@@ -303,37 +303,37 @@ func BenchmarkGoMemory(b *testing.B) {
 	}
 }
 
-func TestMemoryUsage(t *testing.T) {
-	// 虚拟内存
-	used1, free1, total1 := TOs.MemoryUsage(true)
-	//usedRate1 := float64(used1) / float64(total1)
-	if used1 <= 0 || free1 <= 0 || total1 <= 0 {
-		t.Error("MemoryUsage(true) fail")
-		return
-	}
+//func TestMemoryUsage(t *testing.T) {
+//	// 虚拟内存
+//	used1, free1, total1 := TOs.MemoryUsage(true)
+//	//usedRate1 := float64(used1) / float64(total1)
+//	if used1 <= 0 || free1 <= 0 || total1 <= 0 {
+//		t.Error("MemoryUsage(true) fail")
+//		return
+//	}
+//
+//	// 真实物理内存
+//	used2, free2, total2 := TOs.MemoryUsage(false)
+//	//usedRate2 := float64(used2) / float64(total2)
+//	if used2 <= 0 || free2 <= 0 || total2 <= 0 {
+//		t.Error("MemoryUsage(false) fail")
+//		return
+//	}
+//}
 
-	// 真实物理内存
-	used2, free2, total2 := TOs.MemoryUsage(false)
-	//usedRate2 := float64(used2) / float64(total2)
-	if used2 <= 0 || free2 <= 0 || total2 <= 0 {
-		t.Error("MemoryUsage(false) fail")
-		return
-	}
-}
+//func BenchmarkMemoryUsageVirtual(b *testing.B) {
+//	b.ResetTimer()
+//	for i := 0; i < b.N; i++ {
+//		TOs.MemoryUsage(true)
+//	}
+//}
 
-func BenchmarkMemoryUsageVirtual(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		TOs.MemoryUsage(true)
-	}
-}
-
-func BenchmarkMemoryUsagePhysic(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		TOs.MemoryUsage(false)
-	}
-}
+//func BenchmarkMemoryUsagePhysic(b *testing.B) {
+//	b.ResetTimer()
+//	for i := 0; i < b.N; i++ {
+//		TOs.MemoryUsage(false)
+//	}
+//}
 
 func TestCpuUsage(t *testing.T) {
 	usr, idle, total := TOs.CpuUsage()
@@ -355,20 +355,20 @@ func BenchmarkCpuUsage(b *testing.B) {
 	}
 }
 
-func TestDiskUsage(t *testing.T) {
-	used, free, total := TOs.DiskUsage("/")
-	if used <= 0 || free <= 0 || total <= 0 {
-		t.Error("DiskUsage fail")
-		return
-	}
-}
+//func TestDiskUsage(t *testing.T) {
+//	used, free, total := TOs.DiskUsage("/")
+//	if used <= 0 || free <= 0 || total <= 0 {
+//		t.Error("DiskUsage fail")
+//		return
+//	}
+//}
 
-func BenchmarkDiskUsage(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		TOs.DiskUsage("/")
-	}
-}
+//func BenchmarkDiskUsage(b *testing.B) {
+//	b.ResetTimer()
+//	for i := 0; i < b.N; i++ {
+//		TOs.DiskUsage("/")
+//	}
+//}
 
 func TestSetenvGetenv(t *testing.T) {
 	name1 := "HELLO"
@@ -380,8 +380,8 @@ func TestSetenvGetenv(t *testing.T) {
 		return
 	}
 
-	val1 := TOs.GetENV(name1)
-	val2 := TOs.GetENV(name2)
+	val1 := TOs.Getenv(name1)
+	val2 := TOs.Getenv(name2)
 	if val1 != "world" || val2 == "" {
 		t.Error("GetENV fail")
 		return
@@ -398,7 +398,7 @@ func BenchmarkSetenv(b *testing.B) {
 func BenchmarkGetENV(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		TOs.GetENV("HELLO")
+		TOs.Getenv("HELLO")
 	}
 }
 

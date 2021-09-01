@@ -78,9 +78,14 @@ func isFloat(val interface{}) bool {
 	return false
 }
 
-// isMap 检查变量是否字
-func isMap(data interface{}) bool {
-	return reflect.ValueOf(data).Kind() == reflect.Map
+// isMap 检查变量是否map
+func isMap(varMap interface{}) bool {
+	return reflect.ValueOf(varMap).Kind() == reflect.Map
+}
+
+// isStruct 检查变量是否是struct
+func isStruct(varStruct interface{}) bool {
+	return reflect.TypeOf(varStruct).Kind() == reflect.Struct
 }
 
 // creditChecksum 计算身份证校验码,其中id为身份证号码

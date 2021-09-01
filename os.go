@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"golang.org/x/sys/windows"
+	//"golang.org/x/sys/windows"
 	"io"
 	"io/ioutil"
 	"net"
@@ -18,8 +18,9 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
+	//"syscall"
 	"unicode"
-	"unsafe"
+	//"unsafe"
 )
 
 // SystemInfo 系统信息
@@ -240,42 +241,42 @@ func (to *TsOs) GoMemory() uint64 {
 // used为已用,
 // free为空闲,
 // total为总数.
-func (to *TsOs) MemoryUsage(virtual bool) (used, free, total uint64) {
-	if virtual {
-		// 虚拟机的内存
-		contents, err := ioutil.ReadFile("/proc/memento")
-		if err == nil {
-			lines := strings.Split(string(contents), "\n")
-			for _, line := range lines {
-				fields := strings.Fields(line)
-				if len(fields) == 3 {
-					val, _ := strconv.ParseUint(fields[1], 10, 64) // kB
-
-					if strings.HasPrefix(fields[0], "MemTotal") {
-						total = val * 1024
-					} else if strings.HasPrefix(fields[0], "MemFree") {
-						free = val * 1024
-					}
-				}
-			}
-
-			//计算已用内存
-			used = total - free
-		}
-	}
-	//else {
-	//	// 真实物理机内存
-	//	sys := &syscall.Sysinfo_t{}
-	//	err := syscall.Sysinfo(sys)
-	//	if err == nil {
-	//		total = sys.Totalram * uint64(syscall.Getpagesize()/1024)
-	//		free = sys.Freeram * uint64(syscall.Getpagesize()/1024)
-	//		used = total - free
-	//	}
-	//}
-
-	return
-}
+// win 与linux 不通用 废弃.
+//func (to *TsOs) MemoryUsage(virtual bool) (used, free, total uint64) {
+//	if virtual {
+//		// 虚拟机的内存
+//		contents, err := ioutil.ReadFile("/proc/memento")
+//		if err == nil {
+//			lines := strings.Split(string(contents), "\n")
+//			for _, line := range lines {
+//				fields := strings.Fields(line)
+//				if len(fields) == 3 {
+//					val, _ := strconv.ParseUint(fields[1], 10, 64) // kB
+//
+//					if strings.HasPrefix(fields[0], "MemTotal") {
+//						total = val * 1024
+//					} else if strings.HasPrefix(fields[0], "MemFree") {
+//						free = val * 1024
+//					}
+//				}
+//			}
+//
+//			//计算已用内存
+//			used = total - free
+//		}
+//	} else {
+//		// 真实物理机内存
+//		sys := &syscall.Sysinfo_t{}
+//		err := syscall.Sysinfo(sys)
+//		if err == nil {
+//			total = sys.Totalram * uint64(syscall.Getpagesize()/1024)
+//			free = sys.Freeram * uint64(syscall.Getpagesize()/1024)
+//			used = total - free
+//		}
+//	}
+//
+//	return
+//}
 
 // CpuUsage 获取CPU使用率(仅支持linux),单位jiffies(节拍数).
 // user为用户态(用户进程)的运行时间,
@@ -311,43 +312,44 @@ func (to *TsOs) CpuUsage() (user, idle, total uint64) {
 
 // DiskUsage 获取磁盘/目录使用情况,单位字节.参数path为目录.
 // used为已用, free为空闲, total为总数.
-func (to *TsOs) DiskUsage(path string) (used, free, total uint64) {
-	//if runtime.GOOS == "linux" {
-	//	fs := &syscall.Statfs_t{}
-	//	err := syscall.Statfs(path, fs)
-	//	if err == nil {
-	//		total = fs.Blocks * uint64(fs.Bsize)
-	//		free = fs.Bfree * uint64(fs.Bsize)
-	//		used = total - free
-	//	}
-	//}
-	if runtime.GOOS == "windows" {
-		h := windows.MustLoadDLL("kernel32.dll")
-		c := h.MustFindProc("GetDiskFreeSpaceExW")
-		lpFreeBytesAvailable := uint64(0)
-		lpTotalNumberOfBytes := uint64(0)
-		lpTotalNumberOfFreeBytes := uint64(0)
-		_, _, err := c.Call(uintptr(unsafe.Pointer(windows.StringToUTF16Ptr("C:"))),
-			uintptr(unsafe.Pointer(&lpFreeBytesAvailable)),
-			uintptr(unsafe.Pointer(&lpTotalNumberOfBytes)),
-			uintptr(unsafe.Pointer(&lpTotalNumberOfFreeBytes)))
-		if err == nil {
-			total = lpTotalNumberOfBytes
-			free = lpTotalNumberOfFreeBytes
-			used = lpFreeBytesAvailable
-			return
-		}
-	}
-	return
-}
+// win 与 linux mac不通用 已废弃.
+//func (to *TsOs) DiskUsage(path string) (used, free, total uint64) {
+//	//if runtime.GOOS == "linux" {
+//	//	fs := &syscall.Statfs_t{}
+//	//	err := syscall.Statfs(path, fs)
+//	//	if err == nil {
+//	//		total = fs.Blocks * uint64(fs.Bsize)
+//	//		free = fs.Bfree * uint64(fs.Bsize)
+//	//		used = total - free
+//	//	}
+//	//}
+//	if runtime.GOOS == "windows" {
+//		h := windows.MustLoadDLL("kernel32.dll")
+//		c := h.MustFindProc("GetDiskFreeSpaceExW")
+//		lpFreeBytesAvailable := uint64(0)
+//		lpTotalNumberOfBytes := uint64(0)
+//		lpTotalNumberOfFreeBytes := uint64(0)
+//		_, _, err := c.Call(uintptr(unsafe.Pointer(windows.StringToUTF16Ptr("C:"))),
+//			uintptr(unsafe.Pointer(&lpFreeBytesAvailable)),
+//			uintptr(unsafe.Pointer(&lpTotalNumberOfBytes)),
+//			uintptr(unsafe.Pointer(&lpTotalNumberOfFreeBytes)))
+//		if err == nil {
+//			total = lpTotalNumberOfBytes
+//			free = lpTotalNumberOfFreeBytes
+//			used = lpFreeBytesAvailable
+//			return
+//		}
+//	}
+//	return
+//}
 
 // Setenv 设置一个环境变量的值.
 func (to *TsOs) Setenv(varName, data string) error {
 	return os.Setenv(varName, data)
 }
 
-// GetENV 获取一个环境变量的值.
-func (to *TsOs) GetENV(varName string) string {
+// Getenv 获取一个环境变量的值.
+func (to *TsOs) Getenv(varName string) string {
 	return os.Getenv(varName)
 }
 
@@ -569,6 +571,7 @@ func (to *TsOs) ClientIp(req *http.Request) string {
 }
 
 // GetSystemInfo 获取系统运行信息.
+// 内存等win/linux/mac不通用,已废弃.
 func (to *TsOs) GetSystemInfo() *SystemInfo {
 	//运行时信息
 	mstat := &runtime.MemStats{}
@@ -580,10 +583,10 @@ func (to *TsOs) GetSystemInfo() *SystemInfo {
 	cpuFreeRate := float64(cpuIdel) / float64(cpuTotal)
 
 	//磁盘空间信息
-	diskUsed, diskFree, diskTotal := to.DiskUsage("/")
+	//diskUsed, diskFree, diskTotal := to.DiskUsage("/")
 
 	//内存使用信息
-	memUsed, memFree, memTotal := to.MemoryUsage(true)
+	//memUsed, memFree, memTotal := to.MemoryUsage(true)
 
 	serverName, _ := os.Hostname()
 
@@ -594,13 +597,19 @@ func (to *TsOs) GetSystemInfo() *SystemInfo {
 		CpuNum:       runtime.NumCPU(),
 		CpuUser:      cpuUserRate,
 		CpuFree:      cpuFreeRate,
-		DiskUsed:     diskUsed,
-		DiskFree:     diskFree,
-		DiskTotal:    diskTotal,
-		MemUsed:      memUsed,
+		//DiskUsed:     diskUsed,
+		DiskUsed:     0,
+		//DiskFree:     diskFree,
+		DiskFree:     0,
+		//DiskTotal:    diskTotal,
+		DiskTotal:    0,
+		//MemUsed:      memUsed,
+		MemUsed:      0,
 		MemSys:       mstat.Sys,
-		MemFree:      memFree,
-		MemTotal:     memTotal,
+		//MemFree:      memFree,
+		MemFree:      0,
+		//MemTotal:     memTotal,
+		MemTotal:     0,
 		AllocGolang:  mstat.Alloc,
 		AllocTotal:   mstat.TotalAlloc,
 		Lookups:      mstat.Lookups,

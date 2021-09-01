@@ -749,3 +749,17 @@ func BenchmarkArraySearchItem(b *testing.B) {
 		TArr.ArraySearchItem(list, cond)
 	}
 }
+
+func TestArrayCombine(t *testing.T) {
+	keys := []interface{}{"a", "b", "c"}
+	values := []interface{}{"aa", "bb", "cc"}
+	want := map[interface{}]interface{}{"a":"aa", "b":"bb", "c": "cc"}
+	got := TArr.ArrayCombine(keys, values)
+	if len(want) != len(got) {
+		t.Errorf("the length of %v, does not %v \n", len(got), len(want))
+	}
+
+	if _, ok := got["a"]; !ok {
+		t.Errorf("ArrayCombine errors \n")
+	}
+}

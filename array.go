@@ -754,6 +754,18 @@ func (ta *TsArr) ArraySearchMulti(arr interface{}, condition map[string]interfac
 	return
 }
 
+// ArrayCombine 合并两个数组来创建一个新数组，其中的一个数组元素为键名，另一个数组元素为键值
+func (ta *TsArr) ArrayCombine(keys, values []interface{}) map[interface{}]interface{} {
+	m := make(map[interface{}]interface{}, len(values))
+	if len(keys) != len(values) {
+		return m
+	}
+	for i, v := range keys {
+		m[v] = values[i]
+	}
+	return m
+}
+
 // arrayValuesHelper 返回数组/切片/字典中所有的值.
 // filterNil是否过滤空元素(nil,''),true时排除空元素,false时保留空元素.
 func (ta *TsArr) arrayValuesHelper(arr interface{}, filterNil bool) []interface{} {
@@ -796,13 +808,11 @@ func (ta *TsArr) compareConditionHelper(condition map[string]interface{}, arr in
 				}
 			}
 		}
-
 		if chkNum == condLen {
 			res = arr
 		}
 	default:
 		return
 	}
-
 	return
 }

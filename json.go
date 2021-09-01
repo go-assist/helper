@@ -56,11 +56,13 @@ func (tj *TsJson) JsonToMapArr(jsonStr string) []map[string]interface{} {
 
 // StructToMap 结构体转map.
 func (tj *TsJson) StructToMap(obj interface{}) map[string]interface{} {
-	typeOf := reflect.TypeOf(obj)
-	valueOf := reflect.ValueOf(obj)
 	convert := make(map[string]interface{})
-	for i := 0; i < typeOf.NumField(); i ++ {
-		convert[typeOf.Field(i).Name] = valueOf.Field(i).Interface()
+	if isStruct(obj) {
+		typeOf := reflect.TypeOf(obj)
+		valueOf := reflect.ValueOf(obj)
+		for i := 0; i < typeOf.NumField(); i ++ {
+			convert[typeOf.Field(i).Name] = valueOf.Field(i).Interface()
+		}
 	}
 	return convert
 }
