@@ -82,4 +82,7 @@ const (
 
 	// DynamicKeyLen AuthCode 动态密钥长度,须<32
 	DynamicKeyLen = 8
+
+	// FloatDecimal 默认浮点数精确小数位数
+	FloatDecimal = 10
 )

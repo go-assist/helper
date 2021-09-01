@@ -10,14 +10,14 @@ import (
 func TestInt2Str(t *testing.T) {
 	tim := TConv.Int2Str(TTime.Time())
 	if fmt.Sprint(reflect.TypeOf(tim)) != "string" {
-		t.Error("Int2Str fail")
+		t.Error("Int2Str unit test fail")
 		return
 	}
 
 	//非整型的转为空
 	res := TConv.Int2Str(1.23)
 	if res != "" {
-		t.Error("Int2Str fail")
+		t.Error("Int2Str unit test fail")
 		return
 	}
 }
@@ -36,14 +36,14 @@ func TestIntFloat2Str(t *testing.T) {
 	res1 := TConv.Float2Str(fl, 4)
 	res2 := TConv.Float2Str(f2, 8)
 	if fmt.Sprint(reflect.TypeOf(res1)) != fmt.Sprint(reflect.TypeOf(res2)) {
-		t.Error("Int2Str fail")
+		t.Error("Int2Str unit test fail")
 		return
 	}
 
 	//非浮点的转为空
 	res := TConv.Float2Str(123, 2)
 	if res != "" {
-		t.Error("Float2Str fail")
+		t.Error("Float2Str unit test fail")
 		return
 	}
 }
@@ -68,10 +68,10 @@ func TestBool2Str(t *testing.T) {
 	res1 := TConv.Bool2Str(true)
 	res2 := TConv.Bool2Str(false)
 	if res1 != "true" {
-		t.Error("Bool2Str fail")
+		t.Error("Bool2Str unit test fail")
 		return
 	} else if res2 != "false" {
-		t.Error("Bool2Str fail")
+		t.Error("Bool2Str unit test fail")
 		return
 	}
 }
@@ -87,7 +87,7 @@ func TestBool2Int(t *testing.T) {
 	res1 := TConv.Bool2Int(true)
 	res2 := TConv.Bool2Int(false)
 	if res1 != 1 || res2 != 0 {
-		t.Error("Bool2Int fail")
+		t.Error("Bool2Int unit test fail")
 		return
 	}
 }
@@ -108,7 +108,7 @@ func TestStr2IntStrict(t *testing.T) {
 
 	res := TConv.Str2IntStrict("abc123", 8, true)
 	if fmt.Sprint(reflect.TypeOf(res)) != "int8" {
-		t.Error("Str2IntStrict fail")
+		t.Error("Str2IntStrict unit test fail")
 		return
 	}
 }
@@ -116,7 +116,7 @@ func TestStr2IntStrict(t *testing.T) {
 func TestStr2Int(t *testing.T) {
 	res := TConv.Str2Int("123")
 	if fmt.Sprint(reflect.TypeOf(res)) != "int" {
-		t.Error("Str2Int fail")
+		t.Error("Str2Int unit test fail")
 		return
 	}
 
@@ -151,7 +151,7 @@ func TestStr2Int8(t *testing.T) {
 	tim := TConv.Int2Str(TTime.MicroTime())
 	res := TConv.Str2Int8(tim)
 	if res > 127 {
-		t.Error("Str2Int8 fail")
+		t.Error("Str2Int8 unit test fail")
 		return
 	}
 }
@@ -167,7 +167,7 @@ func TestStr2Int16(t *testing.T) {
 	tim := TConv.Int2Str(TTime.MicroTime())
 	res := TConv.Str2Int16(tim)
 	if res > 32767 {
-		t.Error("Str2Int16 fail")
+		t.Error("Str2Int16 unit test fail")
 		return
 	}
 }
@@ -183,7 +183,7 @@ func TestStr2Int32(t *testing.T) {
 	tim := TConv.Int2Str(TTime.MicroTime())
 	res := TConv.Str2Int32(tim)
 	if res > 2147483647 {
-		t.Error("Str2Int32 fail")
+		t.Error("Str2Int32 unit test fail")
 		return
 	}
 }
@@ -199,7 +199,7 @@ func TestStr2Int64(t *testing.T) {
 	tim := TConv.Int2Str(TTime.MicroTime())
 	res := TConv.Str2Int64(tim)
 	if res > Int64Max {
-		t.Error("Str2Int64 fail")
+		t.Error("Str2Int64 unit test fail")
 		return
 	}
 }
@@ -219,7 +219,7 @@ func TestStr2UintStrict(t *testing.T) {
 	}()
 	res := TConv.Str2UintStrict("abc123", 8, true)
 	if fmt.Sprint(reflect.TypeOf(res)) != "uint8" {
-		t.Error("Str2UintStrict fail")
+		t.Error("Str2UintStrict unit test fail")
 		return
 	}
 }
@@ -227,7 +227,7 @@ func TestStr2UintStrict(t *testing.T) {
 func TestStr2Uint(t *testing.T) {
 	res := TConv.Str2Uint("-123")
 	if fmt.Sprint(reflect.TypeOf(res)) != "uint" {
-		t.Error("Str2Uint fail")
+		t.Error("Str2Uint unit test fail")
 		return
 	}
 }
@@ -243,7 +243,7 @@ func TestStr2Uint8(t *testing.T) {
 	tim := TConv.Int2Str(TTime.MicroTime())
 	res := TConv.Str2Uint8(tim)
 	if res > 255 {
-		t.Error("Str2Uint8 fail")
+		t.Error("Str2Uint8 unit test fail")
 		return
 	}
 }
@@ -259,7 +259,7 @@ func TestStr2Uint16(t *testing.T) {
 	tim := TConv.Int2Str(TTime.MicroTime())
 	res := TConv.Str2Uint16(tim)
 	if res > 65535 {
-		t.Error("Str2Uint16 fail")
+		t.Error("Str2Uint16 unit test fail")
 		return
 	}
 }
@@ -275,7 +275,7 @@ func TestStr2Uint32(t *testing.T) {
 	tim := TConv.Int2Str(TTime.MicroTime())
 	res := TConv.Str2Uint32(tim)
 	if res > 4294967295 {
-		t.Error("Str2Uint32 fail")
+		t.Error("Str2Uint32 unit test fail")
 		return
 	}
 }
@@ -291,7 +291,7 @@ func TestStr2Uint64(t *testing.T) {
 	tim := TConv.Int2Str(TTime.MicroTime())
 	res := TConv.Str2Uint64(tim)
 	if res > Uint64Max {
-		t.Error("Str2Uint64 fail")
+		t.Error("Str2Uint64 unit test fail")
 		return
 	}
 }
@@ -312,7 +312,7 @@ func TestStr2FloatStrict(t *testing.T) {
 
 	res := TConv.Str2FloatStrict("abc123", 32, true)
 	if fmt.Sprint(reflect.TypeOf(res)) != "float32" {
-		t.Error("Str2FloatStrict fail")
+		t.Error("Str2FloatStrict unit test fail")
 		return
 	}
 }
@@ -320,7 +320,7 @@ func TestStr2FloatStrict(t *testing.T) {
 func TestStr2Float32(t *testing.T) {
 	res := TConv.Str2Float32("123.456")
 	if fmt.Sprint(reflect.TypeOf(res)) != "float32" {
-		t.Error("Str2Float32 fail")
+		t.Error("Str2Float32 unit test fail")
 		return
 	}
 }
@@ -335,7 +335,7 @@ func BenchmarkStr2Float32(b *testing.B) {
 func TestStr2Float64(t *testing.T) {
 	res := TConv.Str2Float64("123.456")
 	if fmt.Sprint(reflect.TypeOf(res)) != "float64" {
-		t.Error("Str2Float64 fail")
+		t.Error("Str2Float64 unit test fail")
 		return
 	}
 }
@@ -354,10 +354,10 @@ func TestStr2Bool(t *testing.T) {
 	res4 := TConv.Str2Bool("Hello")
 
 	if !res1 || !res2 || !res3 {
-		t.Error("Str2Bool fail")
+		t.Error("Str2Bool unit test fail")
 		return
 	} else if res4 {
-		t.Error("Str2Bool fail")
+		t.Error("Str2Bool unit test fail")
 		return
 	}
 }
@@ -373,7 +373,7 @@ func TestStr2Bytes(t *testing.T) {
 	str := `hello world!`
 	res := TConv.Str2Bytes(str)
 	if fmt.Sprint(reflect.TypeOf(res)) != "[]uint8" {
-		t.Error("Str2Bytes fail")
+		t.Error("Str2Bytes unit test fail")
 		return
 	}
 }
@@ -394,7 +394,7 @@ func TestBytes2Str(t *testing.T) {
 	sli := []byte("hello world!")
 	res := TConv.Bytes2Str(sli)
 	if fmt.Sprint(reflect.TypeOf(res)) != "string" {
-		t.Error("Bytes2Str fail")
+		t.Error("Bytes2Str unit test fail")
 		return
 	}
 }
@@ -415,7 +415,7 @@ func TestDec2Bin(t *testing.T) {
 	var num int64 = 8
 	res := TConv.Dec2Bin(num)
 	if res != "1000" {
-		t.Error("Dec2Bin fail")
+		t.Error("Dec2Bin unit test fail")
 		return
 	}
 }
@@ -430,7 +430,7 @@ func BenchmarkDec2Bin(b *testing.B) {
 func TestBin2Dec(t *testing.T) {
 	res, err := TConv.Bin2Dec("1000")
 	if err != nil || res != 8 {
-		t.Error("Bin2Dec fail")
+		t.Error("Bin2Dec unit test fail")
 		return
 	}
 	_, _ = TConv.Bin2Dec("hello")
@@ -446,7 +446,7 @@ func BenchmarkBin2Dec(b *testing.B) {
 func TestHex2Bin(t *testing.T) {
 	_, err := TConv.Hex2Bin("123abaft")
 	if err != nil {
-		t.Error("Hex2Bin fail")
+		t.Error("Hex2Bin unit test fail")
 		return
 	}
 	_, _ = TConv.Hex2Bin("hello")
@@ -462,7 +462,7 @@ func BenchmarkHex2Bin(b *testing.B) {
 func TestBin2Hex(t *testing.T) {
 	_, err := TConv.Bin2Hex("1001000111010101111111111")
 	if err != nil {
-		t.Error("Bin2Hex fail")
+		t.Error("Bin2Hex unit test fail")
 		return
 	}
 	_, _ = TConv.Bin2Hex("hello")
@@ -478,7 +478,7 @@ func BenchmarkBin2Hex(b *testing.B) {
 func TestDec2Hex(t *testing.T) {
 	res := TConv.Dec2Hex(1234567890)
 	if res != "499602d2" {
-		t.Error("Dec2Hex fail")
+		t.Error("Dec2Hex unit test fail")
 		return
 	}
 }
@@ -494,10 +494,10 @@ func TestHex2Dec(t *testing.T) {
 	res1, err := TConv.Hex2Dec("123abf")
 	res2, _ := TConv.Hex2Dec("0x123abf")
 	if err != nil {
-		t.Error("Hex2Dec fail")
+		t.Error("Hex2Dec unit test fail")
 		return
 	} else if res1 != res2 {
-		t.Error("Hex2Dec fail")
+		t.Error("Hex2Dec unit test fail")
 		return
 	}
 }
@@ -512,7 +512,7 @@ func BenchmarkHex2Dec(b *testing.B) {
 func TestDec2Oct(t *testing.T) {
 	res := TConv.Dec2Oct(123456789)
 	if res != "726746425" {
-		t.Error("Dec2Oct fail")
+		t.Error("Dec2Oct unit test fail")
 		return
 	}
 }
@@ -528,10 +528,10 @@ func TestOct2Dec(t *testing.T) {
 	res1, err := TConv.Oct2Dec("726746425")
 	res2, _ := TConv.Oct2Dec("0726746425")
 	if err != nil {
-		t.Error("Oct2Dec fail")
+		t.Error("Oct2Dec unit test fail")
 		return
 	} else if res1 != res2 {
-		t.Error("Oct2Dec fail")
+		t.Error("Oct2Dec unit test fail")
 		return
 	}
 }
@@ -546,7 +546,7 @@ func BenchmarkOct2Dec(b *testing.B) {
 func TestBaseConvert(t *testing.T) {
 	_, err := TConv.BaseConvert("726746425", 10, 16)
 	if err != nil {
-		t.Error("BaseConvert fail")
+		t.Error("BaseConvert unit test fail")
 		return
 	}
 	_, _ = TConv.BaseConvert("hello", 10, 16)
@@ -562,7 +562,7 @@ func BenchmarkBaseConvert(b *testing.B) {
 func TestIp2Long(t *testing.T) {
 	res := TConv.Ip2Long("127.0.0.1")
 	if res == 0 {
-		t.Error("Ip2Long fail")
+		t.Error("Ip2Long unit test fail")
 		return
 	}
 	TConv.Ip2Long("1")
@@ -578,7 +578,7 @@ func BenchmarkIp2Long(b *testing.B) {
 func TestLong2Ip(t *testing.T) {
 	res := TConv.Long2Ip(2130706433)
 	if res != "127.0.0.1" {
-		t.Error("Long2Ip fail")
+		t.Error("Long2Ip unit test fail")
 		return
 	}
 }
@@ -595,7 +595,7 @@ func TestGettype(t *testing.T) {
 	res2 := TConv.Gettype("hello")
 	res3 := TConv.Gettype(false)
 	if res1 != "int" || res2 != "string" || res3 != "bool" {
-		t.Error("Gettype fail")
+		t.Error("Gettype unit test fail")
 		return
 	}
 }
@@ -747,7 +747,7 @@ func TestFloat64ToByte(t *testing.T) {
 	num := 12345.6
 	res := TConv.Float64ToByte(num)
 	if len(res) == 0 {
-		t.Error("Float64ToByte fail")
+		t.Error("Float64ToByte unit test fail")
 		return
 	}
 }
@@ -764,7 +764,7 @@ func TestByte2Float64(t *testing.T) {
 	bs := []byte{205, 204, 204, 204, 204, 28, 200, 64}
 	res := TConv.Byte2Float64(bs)
 	if res != 12345.6 {
-		t.Error("Byte2Float64 fail")
+		t.Error("Byte2Float64 unit test fail")
 		return
 	}
 }
@@ -781,7 +781,7 @@ func TestInt64ToByte(t *testing.T) {
 	var num int64 = 12345
 	res := TConv.Int64ToByte(num)
 	if len(res) == 0 {
-		t.Error("Int64ToByte fail")
+		t.Error("Int64ToByte unit test fail")
 		return
 	}
 }
@@ -798,7 +798,7 @@ func TestByte2Int64(t *testing.T) {
 	bs := []byte{0, 0, 0, 0, 0, 0, 48, 57}
 	res := TConv.Byte2Int64(bs)
 	if res != 12345 {
-		t.Error("Byte2Float64 fail")
+		t.Error("Byte2Float64 unit test fail")
 		return
 	}
 }
@@ -815,7 +815,7 @@ func TestByte2Hex(t *testing.T) {
 	bs := []byte("hello")
 	res := TConv.Byte2Hex(bs)
 	if res != "68656c6c6f" {
-		t.Error("Byte2Hex fail")
+		t.Error("Byte2Hex unit test fail")
 		return
 	}
 }
@@ -832,7 +832,7 @@ func TestHex2Byte(t *testing.T) {
 	str := "68656c6c6f"
 	res := TConv.Hex2Byte(str)
 	if string(res) != "hello" {
-		t.Error("Hex2Byte fail")
+		t.Error("Hex2Byte unit test fail")
 		return
 	}
 }
@@ -852,7 +852,7 @@ func TestGetPointerAddrInt(t *testing.T) {
 	res1 := TConv.GetPointerAddrInt(v1)
 	res2 := TConv.GetPointerAddrInt(v2)
 	if res1 <= 0 || res2 <= 0 {
-		t.Error("GetPointerAddrInt fail")
+		t.Error("GetPointerAddrInt unit test fail")
 		return
 	}
 }

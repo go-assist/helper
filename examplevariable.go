@@ -6,10 +6,10 @@ type Example struct {
 
 var (
 	jsonExample = `{"k1":"v1","k2":"v2"}`
-	errJson  = `{"k1":"v1","k2":"v2}`
-	jsonArr = `[{"email_address":"test1@uber.com"},{"email_address":"test2@uber.com"}]`
-	jsonMap = map[string] interface{} {"C":5, "Go":4.5, "Python":4.5, "C++":2 }
-	jsonStruct = map[string] interface{} {"Examples":"test"}
+	exampleErrJson  = `{"k1":"v1","k2":"v2}`
+	exampleJsonArr = `[{"email_address":"test1@uber.com"},{"email_address":"test2@uber.com"}]`
+	exampleJsonMap = map[string] interface{} {"C":5, "Go":4.5, "Python":4.5, "C++":2 }
+	exampleJsonStruct = map[string] interface{} {"Examples":"test"}
 	exampleStrTests = []struct {
 		param    string
 		start    int
@@ -36,5 +36,90 @@ var (
 		{"http://foobar.中文网/", false, "foobar.中文网"},
 		{"foobar.com/abc/efg/h=1", false, ""},
 		{"127.0.0.1", false, ""},
+	}
+	exampleFloatTests = []struct {
+		param    float32
+		left     float32
+		right    float32
+		expected bool
+	}{
+		{0, 0, 0, true},
+		{1, 0, 0, false},
+		{-1, 0, 0, false},
+		{0, -1, 1, true},
+		{0, 0, 1, true},
+		{0, -1, 0, true},
+		{0, 0, -1, true},
+		{0, 10, 5, false},
+	}
+	exampleFloatIsWhole = []struct {
+		param    float64
+		expected bool
+	}{
+		{0, true},
+		{-1, true},
+		{10, true},
+		{3.14, false},
+		{-96, true},
+		{-10e-12, false},
+	}
+	exampleFloatIsNonPositive = []struct {
+		param    float64
+		expected bool
+	}{
+		{0, true},
+		{-1, true},
+		{10, false},
+		{3.14, false},
+		{-96, true},
+		{-10e-12, true},
+	}
+	exampleFloatIsNonNegative = []struct {
+		param    float64
+		expected bool
+	}{
+		{0, true},
+		{-1, false},
+		{10, true},
+		{3.14, true},
+		{-96, false},
+		{-10e-12, false},
+	}
+	exampleFloatIsPositive = []struct {
+		param    float64
+		expected bool
+	}{
+		{0, false},
+		{-1, false},
+		{10, true},
+		{3.14, true},
+		{-96, false},
+		{-10e-12, false},
+	}
+	exampleFloatIsNegative = []struct {
+		param    float64
+		expected bool
+	}{
+		{0, false},
+		{-1, true},
+		{10, false},
+		{3.14, false},
+		{-96, true},
+		{-10e-12, true},
+	}
+	exampleIntRange = []struct {
+		param    int
+		left     int
+		right    int
+		expected bool
+	}{
+		{0, 0, 0, true},
+		{1, 0, 0, false},
+		{-1, 0, 0, false},
+		{0, -1, 1, true},
+		{0, 0, 1, true},
+		{0, -1, 0, true},
+		{0, 0, -1, true},
+		{0, 10, 5, false},
 	}
 )

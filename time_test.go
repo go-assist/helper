@@ -21,7 +21,7 @@ func TestStr2TimeParse(t *testing.T)  {
 func TestTime(t *testing.T) {
 	ti := fmt.Sprintf("%d", TTime.Time())
 	if len(ti) != 10 {
-		t.Error("Time fail")
+		t.Error("Time unit test fail")
 		return
 	}
 }
@@ -29,7 +29,7 @@ func TestTime(t *testing.T) {
 func TestMicroTime(t *testing.T) {
 	ti := fmt.Sprintf("%d", TTime.MicroTime())
 	if len(ti) != 16 {
-		t.Error("MicroTime fail")
+		t.Error("MicroTime unit test fail")
 		return
 	}
 }
@@ -37,7 +37,7 @@ func TestMicroTime(t *testing.T) {
 func TestServiceUptime(t *testing.T) {
 	res := TTime.ServiceUptime()
 	if int64(res) <= 0 {
-		t.Error("ServiceUptime fail")
+		t.Error("ServiceUptime unit test fail")
 		return
 	}
 }
@@ -45,19 +45,19 @@ func TestServiceUptime(t *testing.T) {
 func TestStr2Timestamp(t *testing.T) {
 	ti, err := TTime.Str2Timestamp("2019-07-11 10:11:23")
 	if err != nil || ti <= 0 {
-		t.Error("Str2Timestamp fail")
+		t.Error("Str2Timestamp unit test fail")
 		return
 	}
 
 	_, err = TTime.Str2Timestamp("02/01/2016 15:04:05")
 	if err == nil {
-		t.Error("Str2Timestamp fail")
+		t.Error("Str2Timestamp unit test fail")
 		return
 	}
 
 	_, err = TTime.Str2Timestamp("2020-02-01 13:39:36", "2019-07- 11 10: 11:23")
 	if err == nil {
-		t.Error("Str2Timestamp fail")
+		t.Error("Str2Timestamp unit test fail")
 		return
 	}
 }
@@ -67,6 +67,6 @@ func TestGetMonthDays(t *testing.T) {
 	days31 := TTime.GetMonthDays(3)
 	days29 := TTime.GetMonthDays(2, 2000)
 	if days28 != 28 || days31 != 31 || days29 != 29 {
-		t.Error("GetMonthDays errors")
+		t.Error("GetMonthDays unit test fail")
 	}
 }

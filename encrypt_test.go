@@ -10,7 +10,7 @@ func TestEncBase64Encode(t *testing.T) {
 	str := []byte("This is an string to encode")
 	res := TEncrypt.Base64Encode(str)
 	if !strings.HasSuffix(res, "=") {
-		t.Error("Base64Encode fail")
+		t.Error("Base64Encode unit test fail")
 		return
 	}
 }
@@ -19,12 +19,12 @@ func TestBase64Decode(t *testing.T) {
 	str := "VGypsyPacyBibiBlumNvZGVkIHN0camlZw=="
 	_, err := TEncrypt.Base64Decode(str)
 	if err != nil {
-		t.Error("Base64Decode fail")
+		t.Error("Base64Decode unit test fail")
 		return
 	}
 	_, err = TEncrypt.Base64Decode("#iu3498r")
 	if err == nil {
-		t.Error("Base64Decode fail")
+		t.Error("Base64Decode unit test fail")
 		return
 	}
 	_, err = TEncrypt.Base64Decode("VGypsy")
@@ -35,13 +35,13 @@ func TestBase64UrlEncodeDecode(t *testing.T) {
 	str := []byte("This is an string to encode")
 	res := TEncrypt.Base64UrlEncode(str)
 	if strings.HasSuffix(res, "=") {
-		t.Error("Base64UrlEncode fail")
+		t.Error("Base64UrlEncode unit test fail")
 		return
 	}
 
 	_, err := TEncrypt.Base64UrlDecode(res)
 	if err != nil {
-		t.Error("Base64UrlDecode fail")
+		t.Error("Base64UrlDecode unit test fail")
 		return
 	}
 }
@@ -52,13 +52,13 @@ func TestAuthCode(t *testing.T) {
 
 	res, _ := TEncrypt.AuthCode(str, key, true, 0)
 	if res == "" {
-		t.Error("AuthCode Encode fail")
+		t.Error("AuthCode Encode unit test fail")
 		return
 	}
 
 	res2, _ := TEncrypt.AuthCode(res, key, false, 0)
 	if res2 == "" {
-		t.Error("AuthCode Decode fail")
+		t.Error("AuthCode Decode unit test fail")
 		return
 	}
 
@@ -76,13 +76,13 @@ func TestPasswordHashVerify(t *testing.T) {
 	pwd := []byte("123456")
 	has, err := TEncrypt.PasswordHash(pwd)
 	if err != nil {
-		t.Error("PasswordHash fail")
+		t.Error("PasswordHash unit test fail")
 		return
 	}
 
 	chk := TEncrypt.PasswordVerify(pwd, has)
 	if !chk {
-		t.Error("PasswordVerify fail")
+		t.Error("PasswordVerify unit test fail")
 		return
 	}
 
@@ -107,7 +107,7 @@ func BenchmarkPasswordHash(b *testing.B) {
 func BenchmarkPasswordVerify(b *testing.B) {
 	b.ResetTimer()
 	pwd := []byte("123456")
-	has := []byte("$2a$10$kCv6ljsVuTSI54oPkWulreEmUNTW/zj0Dgh6qF4Vz0w4C3gVf/w7a")
+	has := []byte("$2a$10$kCv6ljsVuTSI54oPkWereEmUNTW/zj0Dgh6qF4Vz0w4C3gVf/w7a")
 	for i := 0; i < b.N; i++ {
 		//太耗时,只测试少量的
 		if i > 10 {
@@ -122,25 +122,25 @@ func TestEasyEncryptDecrypt(t *testing.T) {
 	str := "hello world你好!hello world你好!hello world你好!hello world你好!"
 	enc := TEncrypt.EasyEncrypt(str, key)
 	if enc == "" {
-		t.Error("EasyEncrypt fail")
+		t.Error("EasyEncrypt unit test fail")
 		return
 	}
 
 	dec := TEncrypt.EasyDecrypt(enc, key)
 	if dec != str {
-		t.Error("EasyDecrypt fail")
+		t.Error("EasyDecrypt unit test fail")
 		return
 	}
 
 	dec = TEncrypt.EasyDecrypt("你好，世界！", key)
 	if dec != "" {
-		t.Error("EasyDecrypt fail")
+		t.Error("EasyDecrypt unit test fail")
 		return
 	}
 
 	TEncrypt.EasyEncrypt("", key)
 	TEncrypt.EasyEncrypt("", "")
-	TEncrypt.EasyDecrypt(enc, "1qwer")
+	TEncrypt.EasyDecrypt(enc, "1qwerty")
 	TEncrypt.EasyDecrypt("123", key)
 	TEncrypt.EasyDecrypt("1234#iu3498r", key)
 }
@@ -148,7 +148,7 @@ func TestEasyEncryptDecrypt(t *testing.T) {
 func BenchmarkEasyDecrypt(b *testing.B) {
 	b.ResetTimer()
 	key := "123456"
-	str := "e10azZaczdODqqimpcY"
+	str := "e10azZacODumpY"
 	for i := 0; i < b.N; i++ {
 		TEncrypt.EasyDecrypt(str, key)
 	}
@@ -161,7 +161,7 @@ func TestHmacShaX(t *testing.T) {
 	res2 := TEncrypt.HmacShaX(str, key, 256)
 	res3 := TEncrypt.HmacShaX(str, key, 512)
 	if res1 == "" || res2 == "" || res3 == "" {
-		t.Error("HmacShaX fail")
+		t.Error("HmacShaX unit test fail")
 		return
 	}
 }

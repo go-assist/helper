@@ -14,7 +14,7 @@ import (
 func TestIsWindows(t *testing.T) {
 	res := TOs.IsWindows()
 	if res {
-		t.Error("IsWindows fail")
+		t.Error("IsWindows unit test fail")
 		return
 	}
 }
@@ -29,7 +29,7 @@ func BenchmarkIsWindows(b *testing.B) {
 func TestIsLinux(t *testing.T) {
 	res := TOs.IsLinux()
 	if !res {
-		t.Error("IsLinux fail")
+		t.Error("IsLinux unit test fail")
 		return
 	}
 }
@@ -44,7 +44,7 @@ func BenchmarkIsLinux(b *testing.B) {
 func TestIsMac(t *testing.T) {
 	res := TOs.IsMac()
 	if res {
-		t.Error("IsMac fail")
+		t.Error("IsMac unit test fail")
 		return
 	}
 }
@@ -59,7 +59,7 @@ func BenchmarkIsMac(b *testing.B) {
 func TestPwd(t *testing.T) {
 	res := TOs.Pwd()
 	if res == "" {
-		t.Error("Pwd fail")
+		t.Error("Pwd unit test fail")
 		return
 	}
 }
@@ -74,7 +74,7 @@ func BenchmarkPwd(b *testing.B) {
 func TestGetWorkList(t *testing.T) {
 	res, err := TOs.GetWorkList()
 	if err != nil || res == "" {
-		t.Error("Getcwd fail")
+		t.Error("Getcwd unit test fail")
 		return
 	}
 }
@@ -90,14 +90,14 @@ func TestChdir(t *testing.T) {
 	err := TOs.Chdir("./testdata")
 	if err != nil {
 		println(err.Error())
-		t.Error("Chdir fail")
+		t.Error("Chdir unit test fail")
 		return
 	}
 
 	err = TOs.Chdir("../")
 	if err != nil {
 		println(err.Error())
-		t.Error("Chdir fail")
+		t.Error("Chdir unit test fail")
 		return
 	}
 	_ = TOs.Chdir("")
@@ -114,7 +114,7 @@ func BenchmarkChdir(b *testing.B) {
 func TestHomeDir(t *testing.T) {
 	_, err := TOs.HomeDir()
 	if err != nil {
-		t.Error("Pwd fail")
+		t.Error("Pwd unit test fail")
 		return
 	}
 }
@@ -129,7 +129,7 @@ func BenchmarkHomeDir(b *testing.B) {
 func TestLocalIP(t *testing.T) {
 	_, err := TOs.LocalIP()
 	if err != nil {
-		t.Error("LocalIP fail")
+		t.Error("LocalIP unit test fail")
 		return
 	}
 }
@@ -144,7 +144,7 @@ func BenchmarkLocalIP(b *testing.B) {
 func TestOutboundIP(t *testing.T) {
 	_, err := TOs.OutboundIP()
 	if err != nil {
-		t.Error("OutboundIP fail")
+		t.Error("OutboundIP unit test fail")
 		return
 	}
 }
@@ -160,7 +160,7 @@ func TestIsPublicIP(t *testing.T) {
 	ipStr, _ := TOs.LocalIP()
 	ipAddr := net.ParseIP(ipStr)
 	if TOs.IsPublicIP(ipAddr) {
-		t.Error("IsPublicIP fail")
+		t.Error("IsPublicIP unit test fail")
 		return
 	}
 	TOs.IsPublicIP(net.ParseIP("127.0.0.1"))
@@ -184,7 +184,7 @@ func BenchmarkIsPublicIP(b *testing.B) {
 func TestGetIPs(t *testing.T) {
 	ips := TOs.GetIPs()
 	if len(ips) == 0 {
-		t.Error("GetIPs fail")
+		t.Error("GetIPs unit test fail")
 		return
 	}
 }
@@ -199,7 +199,7 @@ func BenchmarkGetIPs(b *testing.B) {
 func TestGetMacAddrArr(t *testing.T) {
 	macs := TOs.GetMacAddrArr()
 	if len(macs) == 0 {
-		t.Error("GetMacAddrArr fail")
+		t.Error("GetMacAddrArr unit test fail")
 		return
 	}
 }
@@ -214,7 +214,7 @@ func BenchmarkGetMacAddrs(b *testing.B) {
 func TestHostname(t *testing.T) {
 	res, err := TOs.Hostname()
 	if err != nil || res == "" {
-		t.Error("Hostname fail")
+		t.Error("Hostname unit test fail")
 		return
 	}
 }
@@ -230,7 +230,7 @@ func TestGetIpByHostname(t *testing.T) {
 	name := "localhost"
 	ip, err := TOs.GetIpByHostname(name)
 	if err != nil || ip != "127.0.0.1" {
-		t.Error("GetIpByHostname fail")
+		t.Error("GetIpByHostname unit test fail")
 		return
 	}
 
@@ -250,13 +250,13 @@ func TestGetIpsByDomain(t *testing.T) {
 	name := "google.com"
 	ips, err := TOs.GetIpsByDomain(name)
 	if err != nil || len(ips) == 0 {
-		t.Error("GetIpsByDomain fail")
+		t.Error("GetIpsByDomain unit test fail")
 		return
 	}
 
 	ips, err = TOs.GetIpsByDomain("hello")
 	if err == nil || len(ips) > 0 {
-		t.Error("GetIpsByDomain fail")
+		t.Error("GetIpsByDomain unit test fail")
 		return
 	}
 }
@@ -273,7 +273,7 @@ func TestGetHostByIp(t *testing.T) {
 	ip := "127.0.0.1"
 	host, err := TOs.GetHostByIp(ip)
 	if err != nil || host == "" {
-		t.Error("GetHostByIp fail")
+		t.Error("GetHostByIp unit test fail")
 		return
 	}
 
@@ -291,7 +291,7 @@ func BenchmarkGetHostByIp(b *testing.B) {
 func TestGoMemory(t *testing.T) {
 	mem := TOs.GoMemory()
 	if mem == 0 {
-		t.Error("GoMemory fail")
+		t.Error("GoMemory unit test fail")
 		return
 	}
 }
@@ -308,7 +308,7 @@ func BenchmarkGoMemory(b *testing.B) {
 //	used1, free1, total1 := TOs.MemoryUsage(true)
 //	//usedRate1 := float64(used1) / float64(total1)
 //	if used1 <= 0 || free1 <= 0 || total1 <= 0 {
-//		t.Error("MemoryUsage(true) fail")
+//		t.Error("MemoryUsage(true) unit test fail")
 //		return
 //	}
 //
@@ -316,7 +316,7 @@ func BenchmarkGoMemory(b *testing.B) {
 //	used2, free2, total2 := TOs.MemoryUsage(false)
 //	//usedRate2 := float64(used2) / float64(total2)
 //	if used2 <= 0 || free2 <= 0 || total2 <= 0 {
-//		t.Error("MemoryUsage(false) fail")
+//		t.Error("MemoryUsage(false) unit test fail")
 //		return
 //	}
 //}
@@ -343,7 +343,7 @@ func TestCpuUsage(t *testing.T) {
 	freeRate := float64(idle) / float64(total)
 
 	if usedRate == 0 || freeRate == 0 {
-		t.Error("CpuUsage fail")
+		t.Error("CpuUsage unit test fail")
 		return
 	}
 }
@@ -358,7 +358,7 @@ func BenchmarkCpuUsage(b *testing.B) {
 //func TestDiskUsage(t *testing.T) {
 //	used, free, total := TOs.DiskUsage("/")
 //	if used <= 0 || free <= 0 || total <= 0 {
-//		t.Error("DiskUsage fail")
+//		t.Error("DiskUsage unit test fail")
 //		return
 //	}
 //}
@@ -376,14 +376,14 @@ func TestSetenvGetenv(t *testing.T) {
 
 	err := TOs.Setenv(name1, "world")
 	if err != nil {
-		t.Error("Setenv fail")
+		t.Error("Setenv unit test fail")
 		return
 	}
 
 	val1 := TOs.Getenv(name1)
 	val2 := TOs.Getenv(name2)
 	if val1 != "world" || val2 == "" {
-		t.Error("GetENV fail")
+		t.Error("GetENV unit test fail")
 		return
 	}
 }
@@ -413,10 +413,10 @@ func TestGetEndian_IsLittleEndian(t *testing.T) {
 	isLit := TOs.IsLittleEndian()
 
 	if fmt.Sprintf("%v", endi) == "" {
-		t.Error("GetEndian fail")
+		t.Error("GetEndian unit test fail")
 		return
 	} else if isLit && fmt.Sprintf("%v", endi) != "LittleEndian" {
-		t.Error("IsLittleEndian fail")
+		t.Error("IsLittleEndian unit test fail")
 		return
 	}
 }
@@ -439,7 +439,7 @@ func TestExec(t *testing.T) {
 	cmd := " ls -a -h"
 	ret, _, _ := TOs.Exec(cmd)
 	if ret == 1 {
-		t.Error("Exec fail")
+		t.Error("Exec unit test fail")
 		return
 	}
 
@@ -459,7 +459,7 @@ func TestSystem(t *testing.T) {
 	cmd := " ls -a -h"
 	ret, _, _ := TOs.System(cmd)
 	if ret == 1 {
-		t.Error("System fail")
+		t.Error("System unit test fail")
 		return
 	}
 
@@ -507,7 +507,7 @@ func TestChmodChown(t *testing.T) {
 	res2 := TOs.Chown(file, uid, guid)
 
 	if !res1 || !res2 {
-		t.Error("Chmod fail")
+		t.Error("Chmod unit test fail")
 		return
 	}
 }
@@ -534,7 +534,7 @@ func BenchmarkChown(b *testing.B) {
 func TestGetTempDir(t *testing.T) {
 	res := TOs.GetTempDir()
 	if res == "" {
-		t.Error("GetTempDir fail")
+		t.Error("GetTempDir unit test fail")
 		return
 	}
 }
@@ -549,7 +549,7 @@ func BenchmarkGetTempDir(b *testing.B) {
 func TestPrivateCIDR(t *testing.T) {
 	res := TOs.PrivateCIDR()
 	if len(res) == 0 {
-		t.Error("PrivateCIDR fail")
+		t.Error("PrivateCIDR unit test fail")
 		return
 	}
 }
@@ -565,33 +565,33 @@ func TestIsPrivateIp(t *testing.T) {
 	// 无效Ip
 	res, err := TOs.IsPrivateIp("hello")
 	if res || err == nil {
-		t.Error("IsPrivateIp fail")
+		t.Error("IsPrivateIp unit test fail")
 		return
 	}
 
 	// TPrivyCiders未初始化数据
 	if len(TPrivyCiders) != 0 {
-		t.Error("IsPrivateIp fail")
+		t.Error("IsPrivateIp unit test fail")
 		return
 	}
 
 	// docker ip
 	res, err = TOs.IsPrivateIp("172.17.0.1")
 	if !res || err != nil {
-		t.Error("IsPrivateIp fail")
+		t.Error("IsPrivateIp unit test fail")
 		return
 	}
 
 	//外网ip
 	res, err = TOs.IsPrivateIp("220.181.38.148")
 	if res || err != nil {
-		t.Error("IsPrivateIp fail")
+		t.Error("IsPrivateIp unit test fail")
 		return
 	}
 
 	// TPrivyCiders 已初始化数据
 	if len(TPrivyCiders) == 0 {
-		t.Error("IsPrivateIp fail")
+		t.Error("IsPrivateIp unit test fail")
 		return
 	}
 }
@@ -749,11 +749,11 @@ func TestGetPidByPortGetProcessExeByPid(t *testing.T) {
 		res := TOs.GetPidByPort(2020)
 		exePath := TOs.GetProcessExeByPid(res)
 		if res == 0 {
-			t.Error("GetPidByPort fail")
+			t.Error("GetPidByPort unit test fail")
 			return
 		}
 		if exePath == "" {
-			t.Error("getProcessExeByPid fail")
+			t.Error("getProcessExeByPid unit test fail")
 			return
 		}
 	})

@@ -538,13 +538,13 @@ func TestTrim(t *testing.T) {
 	str := " hello world!你好 世界！　"
 	res := TStr.Trim(str)
 	if res[0] != 'h' {
-		t.Error("Trim fail")
+		t.Error("Trim unit test fail")
 		return
 	}
 
 	res = TStr.Trim("\v\t 0.0.0\f\n ")
 	if res != "0.0.0" {
-		t.Error("Trim fail")
+		t.Error("Trim unit test fail")
 		return
 	}
 
@@ -555,7 +555,7 @@ func TestLtrim(t *testing.T) {
 	str := " hello world!你好 世界！　"
 	res := TStr.Ltrim(str)
 	if res[0] != 'h' {
-		t.Error("Ltrim fail")
+		t.Error("Ltrim unit test fail")
 		return
 	}
 	TStr.Ltrim(str, "\n")
@@ -565,7 +565,7 @@ func TestRtrim(t *testing.T) {
 	str := " hello world!你好 世界！　"
 	res := TStr.Rtrim(str, "　")
 	if strings.HasSuffix(res, "　") {
-		t.Error("Rtrim fail")
+		t.Error("Rtrim unit test fail")
 		return
 	}
 	TStr.Rtrim(str)
@@ -577,7 +577,7 @@ func TestDStrPos(t *testing.T) {
 
 	chk1, itm1 := TStr.DStrPos(str, arr, false)
 	if chk1 || itm1 != "" {
-		t.Error("DStrPos fail")
+		t.Error("DStrPos unit test fail")
 		return
 	}
 
@@ -586,20 +586,20 @@ func TestDStrPos(t *testing.T) {
 
 	chk2, itm2 := TStr.DStrPos(str, arr, false)
 	if !chk2 || itm2 == "" {
-		t.Error("DStrPos fail")
+		t.Error("DStrPos unit test fail")
 		return
 	}
 
 	chk3, itm3 := TStr.DStrPos(str, arr, true)
 	if !chk3 || itm3 != "好" {
-		t.Error("DStrPos fail")
+		t.Error("DStrPos unit test fail")
 		return
 	}
 
 	arr = []string{"呵呵", "时间", "gogo"}
 	chk4, itm4 := TStr.DStrPos(str, arr, true)
 	if chk4 || itm4 != "" {
-		t.Error("DStrPos fail")
+		t.Error("DStrPos unit test fail")
 		return
 	}
 }

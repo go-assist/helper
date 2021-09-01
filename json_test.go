@@ -9,14 +9,14 @@ func TestParseJson(t *testing.T) {
 	if err != nil {
 		t.Errorf("parse json errors of %v \n", err.Error())
 	}
-	_, err = TJson.ParseJson(errJson)
+	_, err = TJson.ParseJson(exampleErrJson)
 	if err == nil {
 		t.Errorf("parse json errors")
 	}
 }
 
 func TestMapToJson(t *testing.T) {
-	jsonStr := TJson.MapToJson(jsonMap)
+	jsonStr := TJson.MapToJson(exampleJsonMap)
 	_, err := TJson.ParseJson(jsonStr)
 	if err != nil {
 		t.Errorf("parse json errors of %v \n", err.Error())
@@ -29,14 +29,14 @@ func TestJsonToMap(t *testing.T) {
 		t.Errorf("reflect valueof does not map \n")
 	}
 	if _, ok := m["k1"]; !ok {
-		t.Errorf("map conv errors\n")
+		t.Errorf("map conv unit test fail \n")
 	}
 }
 
 func TestJsonToMapArray(t *testing.T) {
-	m := TJson.JsonToMapArr(jsonArr)
+	m := TJson.JsonToMapArr(exampleJsonArr)
 	if !isMap(m) || len(m) != 2 {
-		t.Errorf("JsonToMapArr errors\n")
+		t.Errorf("JsonToMapArr unit test fail \n")
 	}
 }
 
@@ -57,9 +57,9 @@ func TestStructToMap(t *testing.T) {
 func TestMapToStruct(t *testing.T) {
 
 	var ex Example
-	ex1, err := TJson.MapToStruct(jsonStruct, ex)
+	ex1, err := TJson.MapToStruct(exampleJsonStruct, ex)
 	if err != nil {
-		t.Errorf("MapToStruct errors \n")
+		t.Errorf("MapToStruct unit test fail \n")
 	}
 	if ex1.(Example).Examples != "test" {
 		t.Errorf("MapToStruct values of %v, not test \n", ex1.(Example).Examples)
@@ -81,7 +81,7 @@ func TestJsonDecode(t *testing.T) {
 	var i interface{}
 	err := TJson.JsonDecode([]byte(jsonExample), &i)
 	if err != nil {
-		t.Errorf("JsonDecode errors: %v\n", err)
+		t.Errorf("JsonDecode unit test fail, errors: %v\n", err)
 	}
 }
 

@@ -10,6 +10,7 @@ var (
 	TArr 		 TsArr
 	TStr 		 TsStr // transfer
 	TInt         TsInt
+	TFloat 		 TsFloat
 	TFile		 TsFile
 	TUri         TsUri
 	THash        TsHash

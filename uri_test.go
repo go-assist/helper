@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"log"
 	"testing"
 )
 
@@ -9,7 +8,7 @@ func TestParseUriQueryToMap(t *testing.T) {
 
 	m := TUri.ParseUriQueryToMap(exampleUriStr)
 	if _, ok := m["Av"]; !ok {
-		t.Errorf("ParseUriQueryToMap Errors")
+		t.Errorf("ParseUriQueryToMap unit test fail")
 	}
 }
 
@@ -29,7 +28,6 @@ func TestGetDomain(t *testing.T) {
 	actual := ""
 	for _, test := range exampleUriTests {
 		actual = TUri.GetDomain(test.param, test.isMain)
-		log.Println(actual, "---",test.expected)
 		if actual != test.expected {
 			t.Errorf("Expected GetDomain(%q) to be %v, got is %v \n", test.param, test.expected, actual)
 		}

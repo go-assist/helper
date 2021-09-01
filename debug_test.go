@@ -12,7 +12,7 @@ func TestGetFuncName(t *testing.T) {
 	res4 := TDebug.GetFuncName(TArr.ArrayDiff, true)  // ArrayDiff-fm
 
 	if !strings.Contains(res1, "TestGetFuncName") || res2 != "TestGetFuncName" || !strings.Contains(res3, "ArrayDiff") || !strings.HasPrefix(res4, "ArrayDiff") {
-		t.Error("GetFuncName fail")
+		t.Error("GetFuncName unit test fail")
 		return
 	}
 }
@@ -27,7 +27,7 @@ func BenchmarkGetFuncName(b *testing.B) {
 func TestGetFuncLine(t *testing.T) {
 	res := TDebug.GetFuncLine()
 	if res <= 0 {
-		t.Error("GetFuncLine fail")
+		t.Error("GetFuncLine unit test fail")
 		return
 	}
 }
@@ -43,10 +43,10 @@ func TestGetFuncFileDir(t *testing.T) {
 	res1 := TDebug.GetFuncFile()
 	res2 := TDebug.GetFuncDir()
 	if res1 == "" {
-		t.Error("GetFuncFile fail")
+		t.Error("GetFuncFile unit test fail")
 		return
 	} else if res2 == "" {
-		t.Error("GetFuncDir fail")
+		t.Error("GetFuncDir unit test fail")
 		return
 	}
 }
@@ -82,7 +82,7 @@ func TestHasMethod(t *testing.T) {
 	chk1 := TDebug.HasMethod(test, "IsLinux")
 	chk2 := TDebug.HasMethod(test, "Hello")
 	if !chk1 || chk2 {
-		t.Error("HasMethod fail")
+		t.Error("HasMethod unit test fail")
 		return
 	}
 }
@@ -101,7 +101,7 @@ func TestGetFuncPackage(t *testing.T) {
 	res3 := TDebug.GetFuncPackage("test")
 
 	if res1 != "kgo" || res1 != res2 || res3 != "" {
-		t.Error("GetFuncPackage fail")
+		t.Error("GetFuncPackage unit test fail")
 		return
 	}
 }
@@ -113,7 +113,7 @@ func TestGetMethod(t *testing.T) {
 	fun2 := TDebug.GetMethod(test, "Hello")
 
 	if fun1 == nil || fun2 != nil {
-		t.Error("GetMethod fail")
+		t.Error("GetMethod unit test fail")
 		return
 	}
 }
@@ -131,14 +131,14 @@ func TestCallMethod(t *testing.T) {
 	//无参数调用
 	res1, err1 := TDebug.CallMethod(test, "GoMemory")
 	if res1 == nil || err1 != nil {
-		t.Error("CallMethod fail")
+		t.Error("CallMethod unit test fail")
 		return
 	}
 
 	//调用不存在的方法
 	res2, err2 := TDebug.CallMethod(test, "Hello")
 	if res2 != nil || err2 == nil {
-		t.Error("CallMethod fail")
+		t.Error("CallMethod unit test fail")
 		return
 	}
 
@@ -147,7 +147,7 @@ func TestCallMethod(t *testing.T) {
 	res3, err3 := TDebug.CallMethod(conv, "BaseConvert", "123456", 10, 16)
 	//结果 [1e240 <nil>]
 	if len(res3) != 2 || res3[0] != "1e240" || res3[1] != nil || err3 != nil {
-		t.Error("CallMethod fail")
+		t.Error("CallMethod unit test fail")
 		return
 	}
 }
@@ -168,21 +168,21 @@ func TestValidFunc(t *testing.T) {
 	//不存在的方法
 	_, _, err = TDebug.ValidFunc("test", "echo")
 	if err == nil {
-		t.Error("ValidFunc fail")
+		t.Error("ValidFunc unit test fail")
 		return
 	}
 
 	//参数数量不足
 	_, _, err = TDebug.ValidFunc(method, "12345")
 	if err == nil {
-		t.Error("ValidFunc fail")
+		t.Error("ValidFunc unit test fail")
 		return
 	}
 
 	//参数类型错误
 	_, _, err = TDebug.ValidFunc(method, 0, "12345", "10", 16)
 	if err == nil {
-		t.Error("ValidFunc fail")
+		t.Error("ValidFunc unit test fail")
 		return
 	}
 }

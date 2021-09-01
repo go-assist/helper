@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"log"
 	"testing"
 )
 
@@ -11,7 +10,6 @@ func TestNewWithSecond(t *testing.T) {
 	i := 0
 	_, err := c.AddFunc(spec, func() {
 		i++
-		log.Println("cron running:", i)
 	})
 	if err != nil {
 		t.Errorf("cron errors: %v\n", err)

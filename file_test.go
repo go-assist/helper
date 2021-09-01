@@ -8,7 +8,7 @@ import (
 func TestIsExist(t *testing.T) {
 	filename := "./file.go"
 	if !TFile.IsFileExist(filename) {
-		t.Error("file not exist")
+		t.Error("file does not exist")
 		return
 	}
 }
@@ -17,7 +17,7 @@ func TestWriteFile(t *testing.T) {
 	str := []byte("Hello World!")
 	err := TFile.FileWrite("./temp/file", str)
 	if err != nil {
-		t.Error("file get contents error")
+		t.Error("file get contents unit test fail")
 		return
 	}
 	_ = TFile.FileWrite("/root/hello/world", str)
@@ -26,7 +26,7 @@ func TestWriteFile(t *testing.T) {
 func TestGetExt(t *testing.T) {
 	filename := "./file.go"
 	if TFile.GetExt(filename) != "go" {
-		t.Error("file extension error")
+		t.Error("file extension unit test fail")
 		return
 	}
 
@@ -37,7 +37,7 @@ func TestBasename(t *testing.T) {
 	path := "./temp/go.png"
 	res := TFile.Basename(path)
 	if res != "go.png" {
-		t.Error("Basename fail")
+		t.Error("Basename unit test fail")
 		return
 	}
 }
@@ -48,7 +48,7 @@ func TestGetMime(t *testing.T) {
 	mime2 := TFile.GetMime(filename, false)
 
 	if mime1 != mime2 {
-		t.Error("GetMime fail")
+		t.Error("GetMime unit test fail")
 		return
 	}
 
@@ -60,7 +60,7 @@ func TestReadInArray(t *testing.T) {
 	filepath := "./temp/go.txt"
 	arr, err := TFile.ReadInArray(filepath)
 	if err != nil || len(arr) != 1 {
-		t.Error("ReadInArray fail")
+		t.Error("ReadInArray unit test fail")
 		return
 	}
 
@@ -71,7 +71,7 @@ func TestReadFile(t *testing.T) {
 	filename := "./file.go"
 	cont, _ := TFile.ReadFile(filename)
 	if string(cont) == "" {
-		t.Error("file get contents error")
+		t.Error("file get contents unit test fail")
 		return
 	}
 }
@@ -79,7 +79,7 @@ func TestReadFile(t *testing.T) {
 func TestFileSize(t *testing.T) {
 	filename := "./file.go"
 	if TFile.FileSize(filename) <= 0 {
-		t.Error("file size error")
+		t.Error("file size unit test fail")
 		return
 	}
 	TFile.FileSize("./hello")
@@ -95,7 +95,7 @@ func TestTouchRenameRemove(t *testing.T) {
 	res1 := TFile.Touch(file1, 0)
 	res2 := TFile.Touch(file2, 2097152)
 	if !res1 || !res2 {
-		t.Error("Touch fail")
+		t.Error("Touch unit test fail")
 		return
 	}
 
@@ -105,7 +105,7 @@ func TestTouchRenameRemove(t *testing.T) {
 	err1 := TFile.Rename(file1, file5)
 	err2 := TFile.Rename(file2, file6)
 	if err1 != nil || err2 != nil {
-		t.Error("Unlink fail")
+		t.Error("Unlink unit test fail")
 		return
 	}
 
@@ -113,7 +113,7 @@ func TestTouchRenameRemove(t *testing.T) {
 	err3 := TFile.Remove(file5)
 	err4 := TFile.Remove(file6)
 	if err3 != nil || err4 != nil {
-		t.Error("Unlink fail")
+		t.Error("Unlink unit test fail")
 		return
 	}
 
@@ -125,7 +125,7 @@ func TestDelDir(t *testing.T) {
 	dir := "./temp"
 	err := TFile.DelDir(dir, true)
 	if err != nil || TFile.IsDir(dir) {
-		t.Error("DelDir fail")
+		t.Error("DelDir unit test fail")
 		return
 	}
 
@@ -138,7 +138,7 @@ func TestAbsPath(t *testing.T) {
 	filename := "./temp/go.png"
 	absPath := TFile.AbsPath(filename)
 	if !TFile.IsFileExist(absPath) {
-		t.Error("file not exist")
+		t.Error("file does not exist")
 		return
 	}
 	TFile.AbsPath("")
@@ -164,7 +164,7 @@ func TestAbsPath(t *testing.T) {
 		res := TFile.AbsPath(filename)
 
 		if res != "D:\\php\\helper\\temp\\go.png" {
-			t.Error("KFile.AbsPath fail")
+			t.Error("KFile.AbsPath unit test fail")
 		}
 
 		//回到旧目录

@@ -62,11 +62,11 @@ func TestArrayFlip(t *testing.T) {
 	mp := map[string]int{"a": 1, "b": 2, "c": 3}
 	res := TArr.ArrayFlip(mp)
 	if val, ok := res[1]; !ok || fmt.Sprintf("%v", val) != "a" {
-		t.Error("ArrayFlip fail")
+		t.Error("ArrayFlip unit test fail")
 		return
 	}
 
-	var sli []string = make([]string, 5)
+	var sli = make([]string, 5)
 	sli[0] = "aaa"
 	sli[2] = "ccc"
 	sli[3] = "ddd"
@@ -85,17 +85,17 @@ func TestArrayKeys(t *testing.T) {
 	mp := map[string]int{"a": 1, "b": 2, "c": 3}
 	res := TArr.ArrayKeys(mp)
 	if len(res) != 3 {
-		t.Error("ArrayKeys fail")
+		t.Error("ArrayKeys unit test fail")
 		return
 	}
 
-	var sli []string = make([]string, 5)
+	var sli = make([]string, 5)
 	sli[0] = "aaa"
 	sli[2] = "ccc"
 	sli[3] = "ddd"
 	res = TArr.ArrayKeys(sli)
 	if len(res) != 5 {
-		t.Error("ArrayKeys fail")
+		t.Error("ArrayKeys unit test fail")
 		return
 	}
 
@@ -112,17 +112,17 @@ func TestArrayValues(t *testing.T) {
 	mp := map[string]int{"a": 1, "b": 2, "c": 3}
 	res := TArr.ArrayValues(mp, false)
 	if len(res) != 3 {
-		t.Error("ArrayValues fail")
+		t.Error("ArrayValues unit test fail")
 		return
 	}
 
-	var sli []string = make([]string, 5)
+	var sli = make([]string, 5)
 	sli[0] = "aaa"
 	sli[2] = "ccc"
 	sli[3] = "ddd"
 	res = TArr.ArrayValues(sli, false)
 	if len(res) != 5 {
-		t.Error("ArrayValues fail")
+		t.Error("ArrayValues unit test fail")
 		return
 	}
 
@@ -137,20 +137,20 @@ func TestMergeSlice(t *testing.T) {
 	}()
 
 	var arr = [10]int{1, 2, 3, 4, 5, 6}
-	var sli []string = make([]string, 5)
+	var sli = make([]string, 5)
 	sli[0] = "aaa"
 	sli[2] = "ccc"
 	sli[3] = "ddd"
 
 	res1 := TArr.MergeSlice(false, arr, sli)
 	if len(res1) != 15 {
-		t.Error("MergeSlice fail")
+		t.Error("MergeSlice unit test fail")
 		return
 	}
 
 	res2 := TArr.MergeSlice(true, arr, sli)
 	if len(res2) != 13 {
-		t.Error("MergeSlice fail")
+		t.Error("MergeSlice unit test fail")
 		return
 	}
 	TArr.MergeSlice(true)
@@ -177,7 +177,7 @@ func TestMergeMap(t *testing.T) {
 	res := TArr.MergeMap(true, mp1, mp2)
 	_, err := TJson.JsonEncode(res)
 	if err != nil {
-		t.Error("MergeMap fail")
+		t.Error("MergeMap unit test fail")
 		return
 	}
 	TArr.MergeMap(false)
@@ -190,7 +190,7 @@ func TestArrayChunk(t *testing.T) {
 	var arr = [11]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"}
 	res1 := TArr.ArrayChunk(arr, size)
 	if len(res1) != 4 {
-		t.Error("ArrayChunk fail")
+		t.Error("ArrayChunk unit test fail")
 		return
 	}
 
@@ -213,7 +213,7 @@ func TestArrayPad(t *testing.T) {
 	res3 := TArr.ArrayPad(arr, -6, "d")
 	res4 := TArr.ArrayPad(arr, 2, "d")
 	if len(res1) != 5 || len(res2) != 6 || fmt.Sprintf("%v", res3[0]) != "d" || len(res4) != 3 {
-		t.Error("ArrayPad fail")
+		t.Error("ArrayPad unit test fail")
 		return
 	}
 
@@ -229,7 +229,7 @@ func TestArraySlice(t *testing.T) {
 	res3 := TArr.ArraySlice(arr, -3, 2)
 	res4 := TArr.ArraySlice(arr, -3, 4)
 	if len(res1) != 0 || len(res2) != 2 || len(res3) != 2 || len(res4) != 3 {
-		t.Error("ArraySlice fail")
+		t.Error("ArraySlice unit test fail")
 		return
 	}
 }
@@ -243,38 +243,38 @@ func TestArrayRand(t *testing.T) {
 	res3 := TArr.ArrayRand(arr, 9)
 
 	if len(res1) != 0 || len(res2) != 3 || len(res3) != 8 {
-		t.Error("ArraySlice fail")
+		t.Error("ArraySlice unit test fail")
 		return
 	}
 }
 
 func TestArrayColumn(t *testing.T) {
 	//数组切片
-	jsonStr := `[{"name":"zhang3","age":23,"sex":1},{"name":"li4","age":30,"sex":1},{"name":"wang5","age":25,"sex":0},{"name":"zhao6","age":50,"sex":0}]`
+	jsonStr := `[{"name":"zhang3","age":23,"sex":1},{"name":"li4","age":30,"sex":1},{"name":"wan5","age":25,"sex":0},{"name":"zhao6","age":50,"sex":0}]`
 	var arr interface{}
 	err := TJson.JsonDecode([]byte(jsonStr), &arr)
 	if err != nil {
-		t.Error("JsonDecode fail")
+		t.Error("JsonDecode unit test fail")
 		return
 	}
 
 	res := TArr.ArrayColumn(arr, "name")
 	if len(res) != 4 {
-		t.Error("ArrayColumn fail")
+		t.Error("ArrayColumn unit test fail")
 		return
 	}
 
 	//字典
-	jsonStr = `{"person1":{"name":"zhang3","age":23,"sex":1},"person2":{"name":"li4","age":30,"sex":1},"person3":{"name":"wang5","age":25,"sex":0},"person4":{"name":"zhao6","age":50,"sex":0}}`
+	jsonStr = `{"person1":{"name":"zhang3","age":23,"sex":1},"person2":{"name":"li4","age":30,"sex":1},"person3":{"name":"wan5","age":25,"sex":0},"person4":{"name":"zhao6","age":50,"sex":0}}`
 	err = TJson.JsonDecode([]byte(jsonStr), &arr)
 	if err != nil {
-		t.Error("JsonDecode fail")
+		t.Error("JsonDecode unit test fail")
 		return
 	}
 
 	res = TArr.ArrayColumn(arr, "name")
 	if len(res) != 4 {
-		t.Error("ArrayColumn fail")
+		t.Error("ArrayColumn unit test fail")
 		return
 	}
 }
@@ -283,13 +283,13 @@ func TestArrayPushPop(t *testing.T) {
 	var arr []interface{}
 	length := TArr.ArrayPush(&arr, 1, 2, 3, "a", "b", "c")
 	if length != 6 {
-		t.Error("ArrayPush fail")
+		t.Error("ArrayPush unit test fail")
 		return
 	}
 
 	last := TArr.ArrayPop(&arr)
 	if fmt.Sprintf("%v", last) != "c" {
-		t.Error("ArrayPop fail")
+		t.Error("ArrayPop unit test fail")
 		return
 	}
 	arr = nil
@@ -316,13 +316,13 @@ func TestArrayShiftUnshift(t *testing.T) {
 	var arr []interface{}
 	length := TArr.ArrayUnshift(&arr, 1, 2, 3, "a", "b", "c")
 	if length != 6 {
-		t.Error("ArrayUnshift fail")
+		t.Error("ArrayUnshift unit test fail")
 		return
 	}
 
 	first := TArr.ArrayShift(&arr)
 	if fmt.Sprintf("%v", first) != "1" {
-		t.Error("ArrayPop fail")
+		t.Error("ArrayPop unit test fail")
 		return
 	}
 	arr = nil
@@ -353,7 +353,7 @@ func TestArrayKeyExistsArr(t *testing.T) {
 	chk2 := TArr.ArrayKeyExists(-1, arr)
 	chk3 := TArr.ArrayKeyExists(6, arr)
 	if !chk1 || chk2 || chk3 {
-		t.Error("ArrayKeyExists fail")
+		t.Error("ArrayKeyExists unit test fail")
 		return
 	}
 
@@ -369,7 +369,7 @@ func TestArrayReverse(t *testing.T) {
 	res := TArr.ArrayReverse(arr)
 
 	if len(res) != 5 || fmt.Sprintf("%s", res[2]) != "c" {
-		t.Error("ArrayReverse fail")
+		t.Error("ArrayReverse unit test fail")
 		return
 	}
 
@@ -394,7 +394,7 @@ func TestImplode(t *testing.T) {
 	arr = nil
 	res = TArr.Implode(",", arr)
 	if res != "" {
-		t.Error("Implode slice fail")
+		t.Error("Implode slice unit test fail")
 		return
 	}
 
@@ -402,7 +402,7 @@ func TestImplode(t *testing.T) {
 	var mp1 = make(map[string]string)
 	res = TArr.Implode(",", mp1)
 	if res != "" {
-		t.Error("Implode map fail")
+		t.Error("Implode map unit test fail")
 		return
 	}
 
@@ -414,7 +414,7 @@ func TestImplode(t *testing.T) {
 	}
 	res = TArr.Implode(",", mp2)
 	if res == "" {
-		t.Error("Implode map fail")
+		t.Error("Implode map unit test fail")
 		return
 	}
 }
@@ -442,7 +442,7 @@ func TestJoinStrings(t *testing.T) {
 
 	res := TArr.JoinStrings(arr, ",")
 	if res != "" {
-		t.Error("JoinStrings fail")
+		t.Error("JoinStrings unit test fail")
 		return
 	}
 
@@ -463,7 +463,7 @@ func TestJoinJoinIntArr(t *testing.T) {
 
 	res := TArr.JoinIntArr(arr, ",")
 	if res != "" {
-		t.Error("JoinStrings fail")
+		t.Error("JoinStrings unit test fail")
 		return
 	}
 
@@ -483,7 +483,7 @@ func TestUniqueIntArr(t *testing.T) {
 	arr := []int{-3, 9, -5, 0, 5, -3, 0, 7}
 	res := TArr.UniqueIntArr(arr)
 	if len(arr) == len(res) {
-		t.Error("UniqueIntArr fail")
+		t.Error("UniqueIntArr unit test fail")
 		return
 	}
 }
@@ -500,7 +500,7 @@ func TestUnique64IntArr(t *testing.T) {
 	arr := []int64{-3, 9, -5, 0, 5, -3, 0, 7}
 	res := TArr.Unique64IntArr(arr)
 	if len(arr) == len(res) {
-		t.Error("Unique64IntArr fail")
+		t.Error("Unique64IntArr unit test fail")
 		return
 	}
 }
@@ -517,14 +517,14 @@ func TestUniqueStrings(t *testing.T) {
 	var arr1 []string
 	res1 := TArr.UniqueStringsArr(arr1)
 	if len(res1) != 0 {
-		t.Error("UniqueStrings fail")
+		t.Error("UniqueStrings unit test fail")
 		return
 	}
 
 	arr2 := []string{"", "hello", "world", "hello", "你好", "world", "1234"}
 	res2 := TArr.UniqueStringsArr(arr2)
 	if len(arr2) == len(res2) {
-		t.Error("UniqueStrings fail")
+		t.Error("UniqueStrings unit test fail")
 		return
 	}
 }
@@ -555,21 +555,21 @@ func TestArrayDiff(t *testing.T) {
 	res1 := TArr.ArrayDiff(ar1, ar2)
 	res2 := TArr.ArrayDiff(mp1, mp2)
 	if len(res1) != len(res2) {
-		t.Error("ArrayDiff fail")
+		t.Error("ArrayDiff unit test fail")
 		return
 	}
 
 	res5 := TArr.ArrayDiff(ar3, ar1)
 	res6 := TArr.ArrayDiff(ar1, ar3)
 	if len(res5) != 0 || len(res6) != 4 {
-		t.Error("ArrayDiff fail")
+		t.Error("ArrayDiff unit test fail")
 		return
 	}
 
 	res7 := TArr.ArrayDiff(mp3, mp1)
 	res8 := TArr.ArrayDiff(mp1, mp3)
 	if len(res7) != 0 || len(res8) != 4 {
-		t.Error("ArrayDiff fail")
+		t.Error("ArrayDiff unit test fail")
 		return
 	}
 
@@ -577,7 +577,7 @@ func TestArrayDiff(t *testing.T) {
 	res10 := TArr.ArrayDiff(ar1, mp3)
 	res11 := TArr.ArrayDiff(ar1, mp1)
 	if len(res9) != 0 || len(res10) != len(res11) {
-		t.Error("ArrayDiff fail")
+		t.Error("ArrayDiff unit test fail")
 		return
 	}
 
@@ -585,7 +585,7 @@ func TestArrayDiff(t *testing.T) {
 	res13 := TArr.ArrayDiff(mp1, ar3)
 	res14 := TArr.ArrayDiff(mp1, ar1)
 	if len(res12) != 0 || len(res13) != len(res14) {
-		t.Error("ArrayDiff fail")
+		t.Error("ArrayDiff unit test fail")
 		return
 	}
 
@@ -663,37 +663,37 @@ func TestArraySearchMulti(t *testing.T) {
 	res3 := TArr.ArraySearchItem(list, cond1)
 	res4 := TArr.ArraySearchItem(arr, cond1)
 	if res3 == nil || res4 == nil {
-		t.Error("ArraySearchItem fail")
+		t.Error("ArraySearchItem unit test fail")
 	}
 
 	mul3 := TArr.ArraySearchMulti(list, cond1)
 	mul4 := TArr.ArraySearchMulti(arr, cond1)
 	if mul3 == nil || mul4 == nil {
-		t.Error("ArraySearchMulti fail")
+		t.Error("ArraySearchMulti unit test fail")
 	}
 
 	res5 := TArr.ArraySearchItem(list, cond2)
 	res6 := TArr.ArraySearchItem(arr, cond2)
 	if res5 == nil || res6 == nil {
-		t.Error("ArraySearchItem fail")
+		t.Error("ArraySearchItem unit test fail")
 	}
 
 	mul5 := TArr.ArraySearchMulti(list, cond2)
 	mul6 := TArr.ArraySearchMulti(arr, cond2)
 	if mul5 == nil || mul6 == nil {
-		t.Error("ArraySearchMulti fail")
+		t.Error("ArraySearchMulti unit test fail")
 	}
 
 	res7 := TArr.ArraySearchItem(list, cond3)
 	res8 := TArr.ArraySearchItem(arr, cond3)
 	if res7 != nil || res8 != nil {
-		t.Error("ArraySearchItem fail")
+		t.Error("ArraySearchItem unit test fail")
 	}
 
 	mul7 := TArr.ArraySearchMulti(list, cond3)
 	mul8 := TArr.ArraySearchMulti(arr, cond3)
 	if mul7 != nil || mul8 != nil {
-		t.Error("ArraySearchMulti fail")
+		t.Error("ArraySearchMulti unit test fail")
 	}
 }
 
@@ -760,6 +760,6 @@ func TestArrayCombine(t *testing.T) {
 	}
 
 	if _, ok := got["a"]; !ok {
-		t.Errorf("ArrayCombine errors \n")
+		t.Errorf("ArrayCombine unit test fail \n")
 	}
 }

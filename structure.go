@@ -4,6 +4,7 @@ type (
 	TsArr byte
 	TsStr byte
 	TsInt byte
+	TsFloat byte
 	TsFile byte
 	TsUri byte
 	TsHash byte
