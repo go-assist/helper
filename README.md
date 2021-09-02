@@ -50,7 +50,7 @@ package helper
 
 import (
 	"fmt"
-	"github.com/applytogetintoyourlife/Helper"
+	"github.com/golangtoolkit/helper"
 )
 
 func example() {
