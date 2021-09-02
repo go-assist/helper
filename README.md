@@ -77,8 +77,8 @@ func example() {
 	funcName := helper.TDebug.GetFuncName(helper.TArr.ArrayDiff, true) // ...ArrayDiff-fm
 	fmt.Println(funcName) // ArrayDiff-fm
 
-	// int
-	round := helper.TInt.Round(4.56)
+	// float
+	round := helper.TFloat.Round(4.56)
 	fmt.Println(round) // 4
 
 	// json
@@ -115,7 +115,20 @@ func example() {
 	uri := `http://localhost/report?Av=5.3.5&Bd=bdtest&Cid=023&CityCode=101030100&Did=70836bc3ae68fddbc78ce5a917ae9e9d60c712df&Imei=`
 	qm := helper.TUri.ParseUriQueryToMap(uri)
 	fmt.Println(qm) // map[Av:5.3.5 Bd:bdtest Cid:023 CityCode:101030100 Did:70836bc3ae68fddbc78ce5a917ae9e9d60c712df Imei:]
-	// ... other
+	
+	// int
+	abs := helper.TInt.Abs(-1)
+	fmt.Println(abs) // 1
+	
+	// time
+	days := helper.TTime.GetMonthDays(2)
+	fmt.Println(days) // 28
+	
+	// validate
+	isEven := helper.TInt.IsEven(3)
+	fmt.Println(isEven) // false
+	
+	// ... other 
 }
 ```
 

@@ -75,7 +75,6 @@ func (ti *TsInt) NumberFormat(number float64, decimal uint8, point, thousand str
 		neg = true
 	}
 	dec := int(decimal)
-	// Will round off
 	str := fmt.Sprintf("%."+strconv.Itoa(dec)+"F", number)
 	prefix, suffix := "", ""
 	if dec > 0 {
@@ -86,7 +85,6 @@ func (ti *TsInt) NumberFormat(number float64, decimal uint8, point, thousand str
 	}
 	sep := []byte(thousand)
 	n, l1, l2 := 0, len(prefix), len(sep)
-	// thousands sep num
 	c := (l1 - 1) / 3
 	tmp := make([]byte, l2*c+l1)
 	pos := len(tmp) - 1
