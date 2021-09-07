@@ -23,12 +23,12 @@ func (tf *TsFile) FileWrite(filePath string, data []byte) (err error) {
 }
 
 // GetExt 获取文件扩展名
-func (tf *TsFile) GetExt(filePath string) string {
-	suffix := filepath.Ext(filePath)
+func (tf *TsFile) GetExt(filePath string) (suffix string) {
+	suffix = filepath.Ext(filePath)
 	if suffix != "" {
-		return strings.ToLower(suffix[1:])
+		suffix = strings.ToLower(suffix[1:])
 	}
-	return suffix
+	return
 }
 
 // Basename 返回路径中的文件名部分
@@ -38,27 +38,26 @@ func (tf *TsFile) Basename(filePath string) string {
 
 // GetMime 获取mime类型
 // fast为true时根据后缀快速获取;为false时读取文件头获取.
-func (tf *TsFile) GetMime(filePath string, fast bool) string {
-	var res string
+func (tf *TsFile) GetMime(filePath string, fast bool) (mimeStr string) {
 	if fast {
 		suffix := filepath.Ext(filePath)
-		res = mime.TypeByExtension(suffix)
+		mimeStr = mime.TypeByExtension(suffix)
 	} else {
 		srcFile, err := os.Open(filePath)
 		if err != nil {
-			return res
+			return
 		}
 
 		buffer := make([]byte, 512)
 		_, err = srcFile.Read(buffer)
 		if err != nil {
-			return res
+			return
 		}
 
-		res = http.DetectContentType(buffer)
+		mimeStr = http.DetectContentType(buffer)
 	}
 
-	return res
+	return
 }
 
 // ReadInArray 文件写入数组
@@ -148,14 +147,12 @@ func (tf *TsFile) DelDir(dir string, delRoot bool) error {
 }
 
 // AbsPath 获取绝对路径,path可允许不存在.
-func (tf *TsFile) AbsPath(filePath string) string {
-	fullPath := ""
+func (tf *TsFile) AbsPath(filePath string) (fullPath string) {
 	res, err := filepath.Abs(filePath) // filepath.Abs最终使用到os.GetWorkList()检查
 	if err != nil {
 		fullPath = filepath.Clean(filepath.Join(`/`, filePath))
 	} else {
 		fullPath = res
 	}
-
-	return fullPath
+	return
 }

@@ -396,39 +396,39 @@ func (tc *TsConvert) ToInt(val interface{}) int {
 }
 
 // ToFloat 强制将变量转换为浮点型;其中true或"true"为1.0 .
-func (tc *TsConvert) ToFloat(val interface{}) (res float64) {
+func (tc *TsConvert) ToFloat(val interface{}) (toFloat float64) {
 	switch val.(type) {
 	case int:
-		res = float64(val.(int))
+		toFloat = float64(val.(int))
 	case int8:
-		res = float64(val.(int8))
+		toFloat = float64(val.(int8))
 	case int16:
-		res = float64(val.(int16))
+		toFloat = float64(val.(int16))
 	case int32:
-		res = float64(val.(int32))
+		toFloat = float64(val.(int32))
 	case int64:
-		res = float64(val.(int64))
+		toFloat = float64(val.(int64))
 	case uint:
-		res = float64(val.(uint))
+		toFloat = float64(val.(uint))
 	case uint8:
-		res = float64(val.(uint8))
+		toFloat = float64(val.(uint8))
 	case uint16:
-		res = float64(val.(uint16))
+		toFloat = float64(val.(uint16))
 	case uint32:
-		res = float64(val.(uint32))
+		toFloat = float64(val.(uint32))
 	case uint64:
-		res = float64(val.(uint64))
+		toFloat = float64(val.(uint64))
 	case float32:
-		res = float64(val.(float32))
+		toFloat = float64(val.(float32))
 	case float64:
-		res = val.(float64)
+		toFloat = val.(float64)
 	case []uint8:
-		res = tc.Str2Float64(string(val.([]uint8)))
+		toFloat = tc.Str2Float64(string(val.([]uint8)))
 	case string:
-		res = tc.Str2Float64(val.(string))
+		toFloat = tc.Str2Float64(val.(string))
 	case bool:
 		if val.(bool) {
-			res = 1.0
+			toFloat = 1.0
 		}
 	}
 
@@ -446,7 +446,6 @@ func (tc *TsConvert) Float64ToByte(val float64) (parseFloat []byte) {
 // Byte2Float64 字节切片转64位浮点数.
 func (tc *TsConvert) Byte2Float64(bytes []byte) float64 {
 	bits := binary.LittleEndian.Uint64(bytes)
-
 	return math.Float64frombits(bits)
 }
 
@@ -454,7 +453,6 @@ func (tc *TsConvert) Byte2Float64(bytes []byte) float64 {
 func (tc *TsConvert) Int64ToByte(val int64) []byte {
 	parseByte := make([]byte, 8)
 	binary.BigEndian.PutUint64(parseByte, uint64(val))
-
 	return parseByte
 }
 

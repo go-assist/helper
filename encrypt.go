@@ -231,17 +231,14 @@ func (te *TsEncrypt) EasyDecrypt(val, key string) string {
 		if x == keyLen {
 			x = 0
 		}
-
 		if data[i] < keyByte[x] {
 			c = int(data[i]) + 256 - int(keyByte[x])
 		} else {
 			c = int(data[i]) - int(keyByte[x])
 		}
 		str = append(str, byte(c))
-
 		x++
 	}
-
 	return string(str)
 }
 

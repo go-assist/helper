@@ -696,7 +696,6 @@ func (to *TsOs) GetPidByPort(port int) (pid int) {
 			}
 		}
 	}
-
 	return
 }
 
