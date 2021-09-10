@@ -507,6 +507,12 @@ func (ta *TsArr) IsMap(val interface{}) bool {
 	return isMap(val)
 }
 
+// IsMapBySprintf 是否是map,通过fmt.Sprintf判断
+func (ta *TsArr) IsMapBySprintf(i interface{}) bool {
+	m := fmt.Sprintf("%T", i)
+	return strings.HasPrefix(m, "map[")
+}
+
 // IsDate2time 检查字符串是否日期格式,并转换为时间戳.注意,时间戳可能为负数(小于1970年时).
 // 匹配如:
 //	0000
