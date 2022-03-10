@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+// 这个时间函数的包也不错, github.com/golang-module/carbon
+
 // Str2TimeParse 将字符串转换为时间结构.
 func (tk *TsTime) Str2TimeParse(str string, format ...string) (time.Time, error) {
 	f := ""
@@ -39,23 +41,26 @@ func (tk *TsTime) ServiceUptime() time.Duration {
 // Str2Timestamp 将字符串转换为时间戳,秒.
 // str 为要转换的字符串;
 // format 为该字符串的格式,默认为"2006-01-02 15:04:05".
-func (tk *TsTime) Str2Timestamp(str string, format ...string) (int64, error) {
+func (tk *TsTime) Str2Timestamp(str string, format ...string) (t int64, e error) {
 	tim, err := tk.Str2TimeParse(str, format...)
 	if err != nil {
-		return 0, err
+		return
 	}
-
-	return tim.Unix(), nil
+	t = tim.Unix()
+	return
 }
 
 // GetMonthDays 获取指定年月的天数, 默认当前年份
-func (tk *TsTime) GetMonthDays(month int, years ...int) int {
+func (tk *TsTime) GetMonthDays(month int, years ...int) (d int) {
 	months := map[int]int{1: 31, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
 
 	if days, ok := months[month]; ok {
-		return days
-	} else if month < 1 || month > 12 {
-		return 0
+		d = days
+		return
+	}
+
+	if month < 1 || month > 12 {
+		return
 	}
 
 	var year int
@@ -68,13 +73,17 @@ func (tk *TsTime) GetMonthDays(month int, years ...int) int {
 
 	if year%100 == 0 {
 		if year%400 == 0 {
-			return 29
+			d = 29
+			return
 		} else {
-			return 28
+			d = 28
+			return
 		}
 	} else if year%4 == 0 {
-		return 29
+		d = 29
+		return
 	} else {
-		return 28
+		d = 28
+		return
 	}
 }

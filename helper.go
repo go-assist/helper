@@ -189,3 +189,13 @@ func isLittleEndian() bool {
 	// 大端: 01 (02 03 04)
 	return b == 0x04
 }
+
+// hex2Decimal 十六进制转十进制
+func hex2Decimal(str string) (decimal int) {
+	i, err := strconv.ParseUint(str, 16, 32)
+	if err != nil {
+		return
+	}
+	decimal = int(i)
+	return
+}

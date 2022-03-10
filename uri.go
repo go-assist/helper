@@ -46,9 +46,11 @@ func (tu *TsUri) GetDomain(str string, isMains ...bool) (domain string) {
 	}
 
 	if err != nil {
-		return ""
-	} else if !isMain {
-		return u.Hostname()
+		return
+	}
+	if !isMain {
+		domain = u.Hostname()
+		return
 	}
 
 	parts := strings.Split(u.Hostname(), ".")

@@ -13,25 +13,27 @@ import (
 )
 
 // InArray 元素是否在数组(切片/字典)内.
-func (ta *TsArr) InArray(needle interface{}, arr interface{}) bool {
+func (ta *TsArr) InArray(needle interface{}, arr interface{}) (r bool) {
 	val := reflect.ValueOf(arr)
 	switch val.Kind() {
 	case reflect.Array, reflect.Slice:
 		for i := 0; i < val.Len(); i++ {
 			if reflect.DeepEqual(needle, val.Index(i).Interface()) {
-				return true
+				r = true
+				return
 			}
 		}
 	case reflect.Map:
 		for _, k := range val.MapKeys() {
 			if reflect.DeepEqual(needle, val.MapIndex(k).Interface()) {
-				return true
+				r = true
+				return
 			}
 		}
 	default:
 		panic("[InArray]arr type must be array, slice or map")
 	}
-	return false
+	return
 }
 
 // ArrayFill 用给定的值value填充数组,num为插入元素的数量.
@@ -364,7 +366,7 @@ func (ta *TsArr) ArrayPop(s *[]interface{}) (pop interface{}) {
 		return nil
 	}
 	ep := len(*s) - 1
-	pop= (*s)[ep]
+	pop = (*s)[ep]
 	*s = (*s)[:ep]
 	return
 }
@@ -387,9 +389,9 @@ func (ta *TsArr) ArrayShift(s *[]interface{}) (shift interface{}) {
 }
 
 // ArrayKeyExists 检查数组里是否有指定的键名或索引.
-func (ta *TsArr) ArrayKeyExists(key interface{}, arr interface{}) bool {
+func (ta *TsArr) ArrayKeyExists(key interface{}, arr interface{}) (r bool) {
 	if key == nil {
-		return false
+		return
 	}
 
 	val := reflect.ValueOf(arr)
@@ -403,18 +405,20 @@ func (ta *TsArr) ArrayKeyExists(key interface{}, arr interface{}) bool {
 
 		length := val.Len()
 		if keyIsInt && length > 0 && keyInt >= 0 && keyInt < length {
-			return true
+			r = true
+			return
 		}
 	case reflect.Map:
 		for _, k := range val.MapKeys() {
 			if fmt.Sprintf("%s", key) == fmt.Sprintf("%s", k) || reflect.DeepEqual(key, k) {
-				return true
+				r = true
+				return
 			}
 		}
 	default:
 		panic("[ArrayKeyExists]arr type must be array, slice or map")
 	}
-	return false
+	return
 }
 
 // ArrayReverse 返回单元顺序相反的数组(仅限数组和切片).
@@ -439,13 +443,13 @@ func (ta *TsArr) ArrayReverse(arr interface{}) []interface{} {
 }
 
 // Implode 用delimiter将数组(数组/切片/字典)的值连接为一个字符串.
-func (ta *TsArr) Implode(delimiter string, arr interface{}) string {
+func (ta *TsArr) Implode(delimiter string, arr interface{}) (s string) {
 	val := reflect.ValueOf(arr)
 	switch val.Kind() {
 	case reflect.Array, reflect.Slice:
 		length := val.Len()
 		if length == 0 {
-			return ""
+			return
 		}
 		var buf bytes.Buffer
 		j := length
@@ -455,7 +459,8 @@ func (ta *TsArr) Implode(delimiter string, arr interface{}) string {
 				buf.WriteString(delimiter)
 			}
 		}
-		return buf.String()
+		s = buf.String()
+		return
 	case reflect.Map:
 		length := len(val.MapKeys())
 		if length == 0 {
@@ -468,8 +473,8 @@ func (ta *TsArr) Implode(delimiter string, arr interface{}) string {
 				buf.WriteString(delimiter)
 			}
 		}
-
-		return buf.String()
+		s = buf.String()
+		return
 	default:
 		panic("[Implode]arr type must be array, slice")
 	}

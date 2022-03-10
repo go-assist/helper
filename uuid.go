@@ -6,11 +6,13 @@ import (
 )
 
 // Uuid 生成uuid
-func (tu *TsUuid) Uuid() string {
+func (tu *TsUuid) Uuid() (newUuid string) {
 	fileId, uuidErr := uuid.NewV4()
 	if uuidErr != nil {
 		log.Println("uuid 生成Err:", uuidErr)
-		return "false"
+		newUuid = "false"
+		return
 	}
-	return fileId.String()
+	newUuid = fileId.String()
+	return
 }

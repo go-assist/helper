@@ -37,11 +37,13 @@ func (tc *TsConvert) Float2Str(val interface{}, decimal int) string {
 }
 
 // Bool2Str 将布尔值转换为字符串.
-func (tc *TsConvert) Bool2Str(val bool) string {
+func (tc *TsConvert) Bool2Str(val bool) (b string) {
 	if val {
-		return "true"
+		b = "true"
+		return
 	}
-	return "false"
+	b = "false"
+	return
 }
 
 // Bool2Int 将布尔值转换为整型.
@@ -196,29 +198,27 @@ func (tc *TsConvert) Dec2Bin(number int64) string {
 
 // Bin2Dec 将二进制转换为十进制.
 func (tc *TsConvert) Bin2Dec(str string) (int64, error) {
-	i, err := strconv.ParseInt(str, 2, 0)
-	if err != nil {
-		return 0, err
-	}
-	return i, nil
+	return strconv.ParseInt(str, 2, 0)
 }
 
 // Hex2Bin 将十六进制字符串转换为二进制字符串.
-func (tc *TsConvert) Hex2Bin(data string) (string, error) {
+func (tc *TsConvert) Hex2Bin(data string) (s string, err error) {
 	i, err := strconv.ParseInt(data, 16, 0)
 	if err != nil {
-		return "", err
+		return
 	}
-	return strconv.FormatInt(i, 2), nil
+	s = strconv.FormatInt(i, 2)
+	return
 }
 
 // Bin2Hex 将二进制字符串转换为十六进制字符串.
-func (tc *TsConvert) Bin2Hex(str string) (string, error) {
+func (tc *TsConvert) Bin2Hex(str string) (s string, err error) {
 	i, err := strconv.ParseInt(str, 2, 0)
 	if err != nil {
-		return "", err
+		return
 	}
-	return strconv.FormatInt(i, 16), nil
+	s = strconv.FormatInt(i, 16)
+	return
 }
 
 // Dec2Hex 将十进制转换为十六进制.
@@ -227,14 +227,14 @@ func (tc *TsConvert) Dec2Hex(number int64) string {
 }
 
 // Hex2Dec 将十六进制转换为十进制.
-func (tc *TsConvert) Hex2Dec(str string) (int64, error) {
+func (tc *TsConvert) Hex2Dec(str string) (i int64, err error) {
 	start := 0
 	if len(str) > 2 && str[0:2] == "0x" {
 		start = 2
 	}
-
 	// bitSize 表示结果的位宽(包括符号位),0 表示最大位宽
-	return strconv.ParseInt(str[start:], 16, 0)
+	i, err = strconv.ParseInt(str[start:], 16, 0)
+	return
 }
 
 // Dec2Oct 将十进制转换为八进制.
@@ -243,39 +243,42 @@ func (tc *TsConvert) Dec2Oct(number int64) string {
 }
 
 // Oct2Dec 将八进制转换为十进制.
-func (tc *TsConvert) Oct2Dec(str string) (int64, error) {
+func (tc *TsConvert) Oct2Dec(str string) (i int64, err error) {
 	start := 0
 	if len(str) > 1 && str[0:1] == "0" {
 		start = 1
 	}
 
-	return strconv.ParseInt(str[start:], 8, 0)
+	i, err = strconv.ParseInt(str[start:], 8, 0)
+	return
 }
 
 // BaseConvert 进制转换,在任意进制之间转换数字.
-func (tc *TsConvert) BaseConvert(number string, fromBase, toBase int) (string, error) {
+func (tc *TsConvert) BaseConvert(number string, fromBase, toBase int) (s string, err error) {
 	i, err := strconv.ParseInt(number, fromBase, 0)
 	if err != nil {
-		return "", err
+		return
 	}
-	return strconv.FormatInt(i, toBase), nil
+	s = strconv.FormatInt(i, toBase)
+	return
 }
 
 // Ip2Long 将 IPV4 的字符串互联网协议转换成长整型数字.
-func (tc *TsConvert) Ip2Long(ipAddress string) uint32 {
+func (tc *TsConvert) Ip2Long(ipAddress string) (l uint32) {
 	ip := net.ParseIP(ipAddress)
 	if ip == nil {
-		return 0
+		return
 	}
-	return binary.BigEndian.Uint32(ip.To4())
+	l = binary.BigEndian.Uint32(ip.To4())
+	return
 }
 
 // Long2Ip 将长整型转化为字符串形式带点的互联网标准格式地址(IPV4).
-func (tc *TsConvert) Long2Ip(properAddress uint32) string {
+func (tc *TsConvert) Long2Ip(properAddress uint32) (ips string) {
 	ipByte := make([]byte, 4)
 	binary.BigEndian.PutUint32(ipByte, properAddress)
-	ip := net.IP(ipByte)
-	return ip.String()
+	ips = net.IP(ipByte).String()
+	return
 }
 
 // Gettype 获取变量类型.
@@ -444,9 +447,10 @@ func (tc *TsConvert) Float64ToByte(val float64) (parseFloat []byte) {
 }
 
 // Byte2Float64 字节切片转64位浮点数.
-func (tc *TsConvert) Byte2Float64(bytes []byte) float64 {
+func (tc *TsConvert) Byte2Float64(bytes []byte) (f float64) {
 	bits := binary.LittleEndian.Uint64(bytes)
-	return math.Float64frombits(bits)
+	f = math.Float64frombits(bits)
+	return
 }
 
 // Int64ToByte 64位整型转字节切片.

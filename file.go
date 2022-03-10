@@ -61,28 +61,31 @@ func (tf *TsFile) GetMime(filePath string, fast bool) (mimeStr string) {
 }
 
 // ReadInArray 文件写入数组
-func (tf *TsFile) ReadInArray(filePath string) ([]string, error) {
+func (tf *TsFile) ReadInArray(filePath string) (strArr []string, err error) {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return strings.Split(string(data), "\n"), nil
+	strArr = strings.Split(string(data), "\n")
+	return
 }
 
 // ReadFile 读取文件内容
-func (tf *TsFile) ReadFile(filePath string) ([]byte, error) {
-	data, err := ioutil.ReadFile(filePath)
-	return data, err
+func (tf *TsFile) ReadFile(filePath string) (bytes []byte, err error) {
+	bytes, err = ioutil.ReadFile(filePath)
+	return
 }
 
 // FileSize 获取文件大小
-func (tf *TsFile) FileSize(filePath string) int64 {
+func (tf *TsFile) FileSize(filePath string) (size int64) {
 	f, err := os.Stat(filePath)
-	if nil != err {
-		return -1
+	if err != nil {
+		size = -1
+		return
 	}
-	return f.Size()
+	size = f.Size()
+	return
 }
 
 // Rename 重命名
@@ -91,18 +94,18 @@ func (tf *TsFile) Rename(oldName string, newName string) error {
 }
 
 // Touch 快速创建指定大小的文件,size为字节
-func (tf *TsFile) Touch(filePath string, size int64) bool {
+func (tf *TsFile) Touch(filePath string, size int64) (r bool) {
 	//创建目录
 	destDir := filepath.Dir(filePath)
 	if destDir != "" && !tf.IsDir(destDir) {
 		if err := os.MkdirAll(destDir, 0766); err != nil {
-			return false
+			return
 		}
 	}
 
 	fd, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
-		return false
+		return
 	}
 	defer func(fd *os.File) {
 		err = fd.Close()
@@ -115,7 +118,8 @@ func (tf *TsFile) Touch(filePath string, size int64) bool {
 		_, _ = fd.Seek(size-1, 0)
 		_, _ = fd.Write([]byte{0})
 	}
-	return true
+	r = true
+	return
 }
 
 // Remove 删除文件
@@ -124,15 +128,16 @@ func (tf *TsFile) Remove(filePath string) error {
 }
 
 // DelDir 删除目录;delRoot为true时连该目录一起删除;为false时只清空该目录.
-func (tf *TsFile) DelDir(dir string, delRoot bool) error {
+func (tf *TsFile) DelDir(dir string, delRoot bool) (err error) {
 	realPath := tf.AbsPath(dir)
 	if !tf.IsDir(realPath) {
-		return errors.New("Dir does not exists:" + dir)
+		err = errors.New("Dir does not exists:" + dir)
+		return
 	}
 
 	names, err := ioutil.ReadDir(realPath)
 	if err != nil {
-		return err
+		return
 	}
 
 	for _, retry := range names {
@@ -143,7 +148,7 @@ func (tf *TsFile) DelDir(dir string, delRoot bool) error {
 	if delRoot {
 		err = os.RemoveAll(realPath)
 	}
-	return err
+	return
 }
 
 // AbsPath 获取绝对路径,path可允许不存在.

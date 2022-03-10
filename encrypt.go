@@ -21,7 +21,7 @@ func (te *TsEncrypt) Base64Encode(str []byte) string {
 }
 
 // Base64Decode 对使用 MIME base64 编码的数据进行解码.
-func (te *TsEncrypt) Base64Decode(str string) ([]byte, error) {
+func (te *TsEncrypt) Base64Decode(str string) (b []byte, err error) {
 	switch len(str) % 4 {
 	case 2:
 		str += "=="
@@ -31,39 +31,43 @@ func (te *TsEncrypt) Base64Decode(str string) ([]byte, error) {
 
 	decodeString, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
-		return nil, err
+		return
 	}
-	return decodeString, nil
+	b = decodeString
+	return
 }
 
 // Base64UrlEncode Base64UrlSafeEncode url安全的Base64Encode,没有'/'和'+'及结尾的'=' .
-func (te *TsEncrypt) Base64UrlEncode(source []byte) string {
+func (te *TsEncrypt) Base64UrlEncode(source []byte) (safeUrl string) {
 	// Base64 Url Safe is the same as Base64 but does not contain '/' and '+' (replaced by '_' and '-') and trailing '=' are removed.
 	byteArr := base64.StdEncoding.EncodeToString(source)
-	safeUrl := strings.Replace(byteArr, "/", "_", -1)
+	safeUrl = strings.Replace(byteArr, "/", "_", -1)
 	safeUrl = strings.Replace(safeUrl, "+", "-", -1)
 	safeUrl = strings.Replace(safeUrl, "=", "", -1)
 	return safeUrl
 }
 
 // Base64UrlDecode url安全的Base64Decode.
-func (te *TsEncrypt) Base64UrlDecode(data string) ([]byte, error) {
+func (te *TsEncrypt) Base64UrlDecode(data string) (b []byte, err error) {
 	var missing = (4 - len(data)%4) % 4
 	data += strings.Repeat("=", missing)
-	return base64.URLEncoding.DecodeString(data)
+	b, err = base64.URLEncoding.DecodeString(data)
+	return
 }
 
 // AuthCode 授权码编码或解码;encode为true时编码,为false解码;expiry为有效期,秒;返回结果为加密/解密的字符串和有效期时间戳.
-func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (string, int64) {
+func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (auth string, expire int64) {
 	// DYNAMIC_KEY_LEN 动态密钥长度,相同的明文会生成不同密文就是依靠动态密钥
 	// 加入随机密钥,可以令密文无任何规律,即便是原文和密钥完全相同,加密结果也会每次不同,增大破解难度。
 	// 取值越大,密文变动规律越大,密文变化 = 16 的 DYNAMIC_KEY_LEN 次方
 	// 当此值为 0 时,则不产生随机密钥
 
 	if str == "" {
-		return "", 0
-	} else if !encode && len(str) < DynamicKeyLen {
-		return "", 0
+		return
+	}
+
+	if !encode && len(str) < DynamicKeyLen {
+		return
 	}
 
 	// 密钥
@@ -95,7 +99,7 @@ func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (strin
 	if encode == false {
 		strByte, err := te.Base64UrlDecode(str[DynamicKeyLen:])
 		if err != nil {
-			return "", 0
+			return
 		}
 		str = string(strByte)
 	} else {
@@ -138,24 +142,28 @@ func (te *TsEncrypt) AuthCode(str, key string, encode bool, expiry int64) (strin
 		// substr($result, 10, 16) == substr(md5(substr($result, 26).$keyB), 0, 16) 验证数据完整性
 		// 验证数据有效性,请看未加密明文的格式
 		if len(result) <= 26 {
-			return "", 0
+			return
 		}
 
 		expTime, _ := strconv.ParseInt(result[:10], 10, 0)
 		if (expTime == 0 || expTime-time.Now().Unix() > 0) && result[10:26] == string(TStr.Md5Hex(append(resData[26:], keyB...), 16)) {
-			return result[26:], expTime
+			auth = result[26:]
+			expire = expTime
+			return
 		} else {
-			return "", expTime
+			expire = expTime
+			return
 		}
 	} else { //加密
 		// 把动态密钥保存在密文里,这也是为什么同样的明文,生产不同密文后能解密的原因
-		result = string(keyC) + te.Base64UrlEncode(resData)
-		return result, expiry
+		auth = string(keyC) + te.Base64UrlEncode(resData)
+		expire = expiry
+		return
 	}
 }
 
 // PasswordHash 创建密码的散列值;costs为算法的cost,范围4~31,默认10,注意值越大越耗时.
-func (te *TsEncrypt) PasswordHash(password []byte, costs ...int) ([]byte, error) {
+func (te *TsEncrypt) PasswordHash(password []byte, costs ...int) (bytes []byte, err error) {
 	var cost int
 	if len(costs) == 0 {
 		cost = 10
@@ -168,8 +176,8 @@ func (te *TsEncrypt) PasswordHash(password []byte, costs ...int) ([]byte, error)
 		}
 	}
 
-	bytes, err := bcrypt.GenerateFromPassword(password, cost)
-	return bytes, err
+	bytes, err = bcrypt.GenerateFromPassword(password, cost)
+	return
 }
 
 // PasswordVerify 验证密码是否和散列值匹配.
@@ -180,10 +188,10 @@ func (te *TsEncrypt) PasswordVerify(password, hash []byte) bool {
 
 // EasyEncrypt 简单加密.
 // data为要加密的原字符串,key为密钥.
-func (te *TsEncrypt) EasyEncrypt(data, key string) string {
+func (te *TsEncrypt) EasyEncrypt(data, key string) (encr string) {
 	dataLen := len(data)
 	if dataLen == 0 {
-		return ""
+		return
 	}
 
 	keyByte := TStr.Md5Hex([]byte(key), 32)
@@ -202,24 +210,25 @@ func (te *TsEncrypt) EasyEncrypt(data, key string) string {
 		x++
 	}
 
-	return string(keyByte[:DynamicKeyLen]) + te.Base64UrlEncode(str)
+	encr = string(keyByte[:DynamicKeyLen]) + te.Base64UrlEncode(str)
+	return
 }
 
 // EasyDecrypt 简单解密.
 // val为待解密的字符串,key为密钥.
-func (te *TsEncrypt) EasyDecrypt(val, key string) string {
+func (te *TsEncrypt) EasyDecrypt(val, key string) (decr string) {
 	if len(val) <= DynamicKeyLen {
-		return ""
+		return
 	}
 
 	data, err := te.Base64UrlDecode(val[DynamicKeyLen:])
 	if err != nil {
-		return ""
+		return
 	}
 
 	keyByte := TStr.Md5Hex([]byte(key), 32)
 	if val[:DynamicKeyLen] != string(keyByte[:DynamicKeyLen]) {
-		return ""
+		return
 	}
 
 	dataLen := len(data)
@@ -239,11 +248,12 @@ func (te *TsEncrypt) EasyDecrypt(val, key string) string {
 		str = append(str, byte(c))
 		x++
 	}
-	return string(str)
+	decr = string(str)
+	return
 }
 
 // HmacShaX HmacSHA-x加密,x为1/256/512 .
-func (te *TsEncrypt) HmacShaX(data, secret []byte, x uint16) string {
+func (te *TsEncrypt) HmacShaX(data, secret []byte, x uint16) (hr string) {
 	// Create a new HMAC by defining the hash type and the key (as byte array)
 	var h hash.Hash
 	switch x {
@@ -264,6 +274,7 @@ func (te *TsEncrypt) HmacShaX(data, secret []byte, x uint16) string {
 	h.Write(data)
 
 	// Get result and encode as hexadecimal string
-	return hex.EncodeToString(h.Sum(nil))
+	hr = hex.EncodeToString(h.Sum(nil))
+	return
 }
 

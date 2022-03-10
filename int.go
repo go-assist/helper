@@ -6,9 +6,10 @@ import (
 )
 
 // Abs 绝对值
-func (ti *TsInt) Abs(n int64) int64 {
+func (ti *TsInt) Abs(n int64) (i int64) {
 	y := n >> 63
-	return (n ^ y) - y
+	i = (n ^ y) - y
+	return
 }
 
 // AverageInt 对整数序列求平均值.

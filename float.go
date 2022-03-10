@@ -3,7 +3,7 @@ package helper
 import "math"
 
 // EqualFloat 比较两个浮点数是否相等.decimal为小数精确位数.
-func (tf *TsFloat) EqualFloat(f1 float64, f2 float64, decimal ...int) bool {
+func (tf *TsFloat) EqualFloat(f1 float64, f2 float64, decimal ...int) (r bool) {
 	var threshold float64
 	var dec int
 	if len(decimal) == 0 {
@@ -15,7 +15,8 @@ func (tf *TsFloat) EqualFloat(f1 float64, f2 float64, decimal ...int) bool {
 	//比较精度
 	threshold = math.Pow10(-dec)
 
-	return math.Abs(f1-f2) <= threshold
+	r = math.Abs(f1-f2) <= threshold
+	return
 }
 
 // Round 对浮点数进行四舍五入.
@@ -60,8 +61,7 @@ func (tf *TsFloat) MinFloat64(nums ...float64) (minFloat float64) {
 }
 
 // SumFloat64 浮点数求和.
-func (tf *TsFloat) SumFloat64(nums ...float64) float64 {
-	var sum float64
+func (tf *TsFloat) SumFloat64(nums ...float64) (sum float64) {
 	for _, v := range nums {
 		sum += v
 	}
