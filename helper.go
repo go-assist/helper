@@ -40,6 +40,7 @@ type sliceHeaderGJson struct {
 	len  int
 	cap  int
 }
+
 // GJsonResult represents a json value that is returned from Get().
 type GJsonResult struct {
 	// Type is the json type
@@ -55,6 +56,13 @@ type GJsonResult struct {
 	// Indexes of all the elements that match on a path containing the '#'
 	// query character.
 	Indexes []int
+}
+type gJsonArrayOrMapResult struct {
+	a  []GJsonResult
+	ai []interface{}
+	o  map[string]GJsonResult
+	oi map[string]interface{}
+	vc byte
 }
 
 func stringBytesGJson(s string) []byte {
@@ -727,4 +735,244 @@ func runeit(json string) rune {
 //  }
 func (t GJsonResult) Exists() bool {
 	return t.Type != GJsonNull || len(t.Raw) != 0
+}
+
+// Value returns one of these types:
+//
+//	bool, for JSON booleans
+//	float64, for JSON numbers
+//	Number, for JSON numbers
+//	string, for JSON string literals
+//	nil, for JSON null
+//	map[string]interface{}, for JSON objects
+//	[]interface{}, for JSON arrays
+//
+func (t GJsonResult) Value() interface{} {
+	if t.Type == GJsonString {
+		return t.Str
+	}
+	switch t.Type {
+	default:
+		return nil
+	case GJsonFalse:
+		return false
+	case GJsonNumber:
+		return t.Num
+	case GJsonJSON:
+		r := t.arrayOrMap(0, true)
+		if r.vc == '{' {
+			return r.oi
+		} else if r.vc == '[' {
+			return r.ai
+		}
+		return nil
+	case GJsonTrue:
+		return true
+	}
+}
+
+func (t GJsonResult) arrayOrMap(vc byte, valueize bool) (r gJsonArrayOrMapResult) {
+	var json = t.Raw
+	var i int
+	var value GJsonResult
+	var count int
+	var key GJsonResult
+	if vc == 0 {
+		for ; i < len(json); i++ {
+			if json[i] == '{' || json[i] == '[' {
+				r.vc = json[i]
+				i++
+				break
+			}
+			if json[i] > ' ' {
+				goto end
+			}
+		}
+	} else {
+		for ; i < len(json); i++ {
+			if json[i] == vc {
+				i++
+				break
+			}
+			if json[i] > ' ' {
+				goto end
+			}
+		}
+		r.vc = vc
+	}
+	if r.vc == '{' {
+		if valueize {
+			r.oi = make(map[string]interface{})
+		} else {
+			r.o = make(map[string]GJsonResult)
+		}
+	} else {
+		if valueize {
+			r.ai = make([]interface{}, 0)
+		} else {
+			r.a = make([]GJsonResult, 0)
+		}
+	}
+	for ; i < len(json); i++ {
+		if json[i] <= ' ' {
+			continue
+		}
+		// get next value
+		if json[i] == ']' || json[i] == '}' {
+			break
+		}
+		switch json[i] {
+		default:
+			if (json[i] >= '0' && json[i] <= '9') || json[i] == '-' {
+				value.Type = GJsonNumber
+				value.Raw, value.Num = tonum(json[i:])
+				value.Str = ""
+			} else {
+				continue
+			}
+		case '{', '[':
+			value.Type = GJsonJSON
+			value.Raw = squash(json[i:])
+			value.Str, value.Num = "", 0
+		case 'n':
+			value.Type = GJsonNull
+			value.Raw = tolit(json[i:])
+			value.Str, value.Num = "", 0
+		case 't':
+			value.Type = GJsonTrue
+			value.Raw = tolit(json[i:])
+			value.Str, value.Num = "", 0
+		case 'f':
+			value.Type = GJsonFalse
+			value.Raw = tolit(json[i:])
+			value.Str, value.Num = "", 0
+		case '"':
+			value.Type = GJsonString
+			value.Raw, value.Str = tostr(json[i:])
+			value.Num = 0
+		}
+		value.Index = i + t.Index
+
+		i += len(value.Raw) - 1
+
+		if r.vc == '{' {
+			if count%2 == 0 {
+				key = value
+			} else {
+				if valueize {
+					if _, ok := r.oi[key.Str]; !ok {
+						r.oi[key.Str] = value.Value()
+					}
+				} else {
+					if _, ok := r.o[key.Str]; !ok {
+						r.o[key.Str] = value
+					}
+				}
+			}
+			count++
+		} else {
+			if valueize {
+				r.ai = append(r.ai, value.Value())
+			} else {
+				r.a = append(r.a, value)
+			}
+		}
+	}
+end:
+	if t.Indexes != nil {
+		if len(t.Indexes) != len(r.a) {
+			for i := 0; i < len(r.a); i++ {
+				r.a[i].Index = 0
+			}
+		} else {
+			for i := 0; i < len(r.a); i++ {
+				r.a[i].Index = t.Indexes[i]
+			}
+		}
+	}
+	return
+}
+
+func squash(json string) string {
+	// expects that the lead character is a '[' or '{' or '(' or '"'
+	// squash the value, ignoring all nested arrays and objects.
+	var i, depth int
+	if json[0] != '"' {
+		i, depth = 1, 1
+	}
+	for ; i < len(json); i++ {
+		if json[i] >= '"' && json[i] <= '}' {
+			switch json[i] {
+			case '"':
+				i++
+				s2 := i
+				for ; i < len(json); i++ {
+					if json[i] > '\\' {
+						continue
+					}
+					if json[i] == '"' {
+						// look for an escaped slash
+						if json[i-1] == '\\' {
+							n := 0
+							for j := i - 2; j > s2-1; j-- {
+								if json[j] != '\\' {
+									break
+								}
+								n++
+							}
+							if n%2 == 0 {
+								continue
+							}
+						}
+						break
+					}
+				}
+				if depth == 0 {
+					if i >= len(json) {
+						return json
+					}
+					return json[:i+1]
+				}
+			case '{', '[', '(':
+				depth++
+			case '}', ']', ')':
+				depth--
+				if depth == 0 {
+					return json[:i+1]
+				}
+			}
+		}
+	}
+	return json
+}
+
+// String returns a string representation of the value.
+func (t GJsonResult) String() string {
+	switch t.Type {
+	default:
+		return ""
+	case GJsonFalse:
+		return "false"
+	case GJsonNumber:
+		if len(t.Raw) == 0 {
+			// calculated result
+			return strconv.FormatFloat(t.Num, 'f', -1, 64)
+		}
+		var i int
+		if t.Raw[0] == '-' {
+			i++
+		}
+		for ; i < len(t.Raw); i++ {
+			if t.Raw[i] < '0' || t.Raw[i] > '9' {
+				return strconv.FormatFloat(t.Num, 'f', -1, 64)
+			}
+		}
+		return t.Raw
+	case GJsonString:
+		return t.Str
+	case GJsonJSON:
+		return t.Raw
+	case GJsonTrue:
+		return "true"
+	}
 }
