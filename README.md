@@ -40,6 +40,7 @@ json (TJson)
 以上操作☝☝☝
 
 ##### 3.获取 ❤❤❤
+go version >= 1.15
 
 go get github.com/golangtoolkit/helper
 
