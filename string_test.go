@@ -10,8 +10,8 @@ import (
 
 func TestByteToString(t *testing.T) {
 	b := []byte("123abc")
-	s := TStr.ByteToString(&b)
-	got := *s
+	s := TStr.ByteToString(b)
+	got := s
 	want := `123abc`
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("The values of %v is not %v\n", got, want)

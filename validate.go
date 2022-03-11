@@ -161,17 +161,17 @@ func (ts *TsStr) HasSpecialChar(str string) (res bool) {
 	return
 }
 
-// IsJSON 字符串是否合法的json格式.
-func (ts *TsStr) IsJSON(str string) bool {
-	length := len(str)
-	if length == 0 {
-		return false
-	} else if (str[0] != '{' || str[length-1] != '}') && (str[0] != '[' || str[length-1] != ']') {
-		return false
-	}
+// IsJSONGJson 字符串是否合法的json格式.
+func (ts *TsStr) IsJSONGJson(str string) (r bool) {
+	_, r = validPayloadGJson(stringBytesGJson(str), 0)
+	return
+}
 
+// IsJSON 字符串是否合法的json格式.
+func (ts *TsStr) IsJSON(str string) (r bool) {
 	var js json.RawMessage
-	return json.Unmarshal([]byte(str), &js) == nil
+	r = json.Unmarshal([]byte(str), &js) == nil
+	return
 }
 
 // IsIP 检查字符串是否IP地址.
@@ -197,15 +197,16 @@ func (ts *TsStr) IsIPv6(str string) bool {
 }
 
 // IsPort 字符串或数字是否端口号.
-func (ts *TsStr) IsPort(val interface{}) bool {
+func (ts *TsStr) IsPort(val interface{}) (r bool) {
 	if TConv.IsInt(val) {
 		port := TConv.ToInt(val)
 		if port > 0 && port < 65536 {
-			return true
+			 r = true
+			 return
 		}
 	}
 
-	return false
+	return
 }
 
 // IsDNSName 是否DNS名称.
@@ -218,13 +219,13 @@ func (ts *TsStr) IsDNSName(str string) bool {
 }
 
 // IsDialString 是否网络拨号字符串(形如127.0.0.1:80),用于net.Dial()检查.
-func (ts *TsStr) IsDialString(str string) bool {
+func (ts *TsStr) IsDialString(str string) (r bool) {
 	h, p, err := net.SplitHostPort(str)
 	if err == nil && h != "" && p != "" && (ts.IsDNSName(h) || ts.IsIP(h)) && ts.IsPort(p) {
-		return true
+		r = true
+		return
 	}
-
-	return false
+	return
 }
 
 // IsMACAddr 是否MAC物理网卡地址.

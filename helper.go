@@ -9,8 +9,61 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode/utf16"
+	"unicode/utf8"
 	"unsafe"
 )
+
+type GJsonType int
+
+const (
+	// GJsonNull is a null json value
+	GJsonNull GJsonType = iota
+	// GJsonFalse is a json false boolean
+	GJsonFalse
+	// GJsonNumber is json number
+	GJsonNumber
+	// GJsonString is a json string
+	GJsonString
+	// GJsonTrue is a json true boolean
+	GJsonTrue
+	// GJsonJSON is a raw block of JSON
+	GJsonJSON
+)
+type stringHeaderGJson struct {
+	data unsafe.Pointer
+	len  int
+}
+
+type sliceHeaderGJson struct {
+	data unsafe.Pointer
+	len  int
+	cap  int
+}
+// GJsonResult represents a json value that is returned from Get().
+type GJsonResult struct {
+	// Type is the json type
+	Type GJsonType
+	// Raw is the raw json
+	Raw string
+	// Str is the json string
+	Str string
+	// Num is the json number
+	Num float64
+	// Index of raw value in original json, zero means index unknown
+	Index int
+	// Indexes of all the elements that match on a path containing the '#'
+	// query character.
+	Indexes []int
+}
+
+func stringBytesGJson(s string) []byte {
+	return *(*[]byte)(unsafe.Pointer(&sliceHeaderGJson{
+		data: (*stringHeaderGJson)(unsafe.Pointer(&s)).data,
+		len:  len(s),
+		cap:  len(s),
+	}))
+}
 
 // getTrimMask 去除mask字符
 func getTrimMask(characterMask []string) string {
@@ -198,4 +251,480 @@ func hex2Decimal(str string) (decimal int) {
 	}
 	decimal = int(i)
 	return
+}
+
+// validPayloadGJson 基础校验
+func validPayloadGJson(data []byte, i int) (outi int, ok bool) {
+	for ; i < len(data); i++ {
+		switch data[i] {
+		default:
+			i, ok = validany(data, i)
+			if !ok {
+				return i, false
+			}
+			for ; i < len(data); i++ {
+				switch data[i] {
+				default:
+					return i, false
+				case ' ', '\t', '\n', '\r':
+					continue
+				}
+			}
+			return i, true
+		case ' ', '\t', '\n', '\r':
+			continue
+		}
+	}
+	return i, false
+}
+
+func validany(data []byte, i int) (outi int, ok bool) {
+	for ; i < len(data); i++ {
+		switch data[i] {
+		default:
+			return i, false
+		case ' ', '\t', '\n', '\r':
+			continue
+		case '{':
+			return validobject(data, i+1)
+		case '[':
+			return validarray(data, i+1)
+		case '"':
+			return validstring(data, i+1)
+		case '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+			return validnumber(data, i+1)
+		case 't':
+			return validtrue(data, i+1)
+		case 'f':
+			return validfalse(data, i+1)
+		case 'n':
+			return validnull(data, i+1)
+		}
+	}
+	return i, false
+}
+
+func validobject(data []byte, i int) (outi int, ok bool) {
+	for ; i < len(data); i++ {
+		switch data[i] {
+		default:
+			return i, false
+		case ' ', '\t', '\n', '\r':
+			continue
+		case '}':
+			return i + 1, true
+		case '"':
+		key:
+			if i, ok = validstring(data, i+1); !ok {
+				return i, false
+			}
+			if i, ok = validcolon(data, i); !ok {
+				return i, false
+			}
+			if i, ok = validany(data, i); !ok {
+				return i, false
+			}
+			if i, ok = validcomma(data, i, '}'); !ok {
+				return i, false
+			}
+			if data[i] == '}' {
+				return i + 1, true
+			}
+			i++
+			for ; i < len(data); i++ {
+				switch data[i] {
+				default:
+					return i, false
+				case ' ', '\t', '\n', '\r':
+					continue
+				case '"':
+					goto key
+				}
+			}
+			return i, false
+		}
+	}
+	return i, false
+}
+
+func validarray(data []byte, i int) (outi int, ok bool) {
+	for ; i < len(data); i++ {
+		switch data[i] {
+		default:
+			for ; i < len(data); i++ {
+				if i, ok = validany(data, i); !ok {
+					return i, false
+				}
+				if i, ok = validcomma(data, i, ']'); !ok {
+					return i, false
+				}
+				if data[i] == ']' {
+					return i + 1, true
+				}
+			}
+		case ' ', '\t', '\n', '\r':
+			continue
+		case ']':
+			return i + 1, true
+		}
+	}
+	return i, false
+}
+
+func validcolon(data []byte, i int) (outi int, ok bool) {
+	for ; i < len(data); i++ {
+		switch data[i] {
+		default:
+			return i, false
+		case ' ', '\t', '\n', '\r':
+			continue
+		case ':':
+			return i + 1, true
+		}
+	}
+	return i, false
+}
+
+func validcomma(data []byte, i int, end byte) (outi int, ok bool) {
+	for ; i < len(data); i++ {
+		switch data[i] {
+		default:
+			return i, false
+		case ' ', '\t', '\n', '\r':
+			continue
+		case ',':
+			return i, true
+		case end:
+			return i, true
+		}
+	}
+	return i, false
+}
+
+func validstring(data []byte, i int) (outi int, ok bool) {
+	for ; i < len(data); i++ {
+		if data[i] < ' ' {
+			return i, false
+		} else if data[i] == '\\' {
+			i++
+			if i == len(data) {
+				return i, false
+			}
+			switch data[i] {
+			default:
+				return i, false
+			case '"', '\\', '/', 'b', 'f', 'n', 'r', 't':
+			case 'u':
+				for j := 0; j < 4; j++ {
+					i++
+					if i >= len(data) {
+						return i, false
+					}
+					if !((data[i] >= '0' && data[i] <= '9') ||
+						(data[i] >= 'a' && data[i] <= 'f') ||
+						(data[i] >= 'A' && data[i] <= 'F')) {
+						return i, false
+					}
+				}
+			}
+		} else if data[i] == '"' {
+			return i + 1, true
+		}
+	}
+	return i, false
+}
+
+func validnumber(data []byte, i int) (outi int, ok bool) {
+	i--
+	// sign
+	if data[i] == '-' {
+		i++
+		if i == len(data) {
+			return i, false
+		}
+		if data[i] < '0' || data[i] > '9' {
+			return i, false
+		}
+	}
+	// int
+	if i == len(data) {
+		return i, false
+	}
+	if data[i] == '0' {
+		i++
+	} else {
+		for ; i < len(data); i++ {
+			if data[i] >= '0' && data[i] <= '9' {
+				continue
+			}
+			break
+		}
+	}
+	// frac
+	if i == len(data) {
+		return i, true
+	}
+	if data[i] == '.' {
+		i++
+		if i == len(data) {
+			return i, false
+		}
+		if data[i] < '0' || data[i] > '9' {
+			return i, false
+		}
+		i++
+		for ; i < len(data); i++ {
+			if data[i] >= '0' && data[i] <= '9' {
+				continue
+			}
+			break
+		}
+	}
+	// exp
+	if i == len(data) {
+		return i, true
+	}
+	if data[i] == 'e' || data[i] == 'E' {
+		i++
+		if i == len(data) {
+			return i, false
+		}
+		if data[i] == '+' || data[i] == '-' {
+			i++
+		}
+		if i == len(data) {
+			return i, false
+		}
+		if data[i] < '0' || data[i] > '9' {
+			return i, false
+		}
+		i++
+		for ; i < len(data); i++ {
+			if data[i] >= '0' && data[i] <= '9' {
+				continue
+			}
+			break
+		}
+	}
+	return i, true
+}
+
+func validtrue(data []byte, i int) (outi int, ok bool) {
+	if i+3 <= len(data) && data[i] == 'r' && data[i+1] == 'u' &&
+		data[i+2] == 'e' {
+		return i + 3, true
+	}
+	return i, false
+}
+func validfalse(data []byte, i int) (outi int, ok bool) {
+	if i+4 <= len(data) && data[i] == 'a' && data[i+1] == 'l' &&
+		data[i+2] == 's' && data[i+3] == 'e' {
+		return i + 4, true
+	}
+	return i, false
+}
+func validnull(data []byte, i int) (outi int, ok bool) {
+	if i+3 <= len(data) && data[i] == 'u' && data[i+1] == 'l' &&
+		data[i+2] == 'l' {
+		return i + 3, true
+	}
+	return i, false
+}
+
+// parseJson 格式化json.
+func parseJson(json string) GJsonResult {
+	var value GJsonResult
+	i := 0
+	for ; i < len(json); i++ {
+		if json[i] == '{' || json[i] == '[' {
+			value.Type = GJsonJSON
+			value.Raw = json[i:] // just take the entire raw
+			break
+		}
+		if json[i] <= ' ' {
+			continue
+		}
+		switch json[i] {
+		case '+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'i', 'I', 'N':
+			value.Type = GJsonNumber
+			value.Raw, value.Num = tonum(json[i:])
+		case 'n':
+			if i+1 < len(json) && json[i+1] != 'u' {
+				// nan
+				value.Type = GJsonNumber
+				value.Raw, value.Num = tonum(json[i:])
+			} else {
+				// null
+				value.Type = GJsonNull
+				value.Raw = tolit(json[i:])
+			}
+		case 't':
+			value.Type = GJsonTrue
+			value.Raw = tolit(json[i:])
+		case 'f':
+			value.Type = GJsonFalse
+			value.Raw = tolit(json[i:])
+		case '"':
+			value.Type = GJsonString
+			value.Raw, value.Str = tostr(json[i:])
+		default:
+			return GJsonResult{}
+		}
+		break
+	}
+	if value.Exists() {
+		value.Index = i
+	}
+	return value
+}
+
+func tonum(json string) (raw string, num float64) {
+	for i := 1; i < len(json); i++ {
+		// less than dash might have valid characters
+		if json[i] <= '-' {
+			if json[i] <= ' ' || json[i] == ',' {
+				// break on whitespace and comma
+				raw = json[:i]
+				num, _ = strconv.ParseFloat(raw, 64)
+				return
+			}
+			// could be a '+' or '-'. let's assume so.
+		} else if json[i] == ']' || json[i] == '}' {
+			// break on ']' or '}'
+			raw = json[:i]
+			num, _ = strconv.ParseFloat(raw, 64)
+			return
+		}
+	}
+	raw = json
+	num, _ = strconv.ParseFloat(raw, 64)
+	return
+}
+
+func tolit(json string) (raw string) {
+	for i := 1; i < len(json); i++ {
+		if json[i] < 'a' || json[i] > 'z' {
+			return json[:i]
+		}
+	}
+	return json
+}
+
+func tostr(json string) (raw string, str string) {
+	// expects that the lead character is a '"'
+	for i := 1; i < len(json); i++ {
+		if json[i] > '\\' {
+			continue
+		}
+		if json[i] == '"' {
+			return json[:i+1], json[1:i]
+		}
+		if json[i] == '\\' {
+			i++
+			for ; i < len(json); i++ {
+				if json[i] > '\\' {
+					continue
+				}
+				if json[i] == '"' {
+					// look for an escaped slash
+					if json[i-1] == '\\' {
+						n := 0
+						for j := i - 2; j > 0; j-- {
+							if json[j] != '\\' {
+								break
+							}
+							n++
+						}
+						if n%2 == 0 {
+							continue
+						}
+					}
+					return json[:i+1], unescape(json[1:i])
+				}
+			}
+			var ret string
+			if i+1 < len(json) {
+				ret = json[:i+1]
+			} else {
+				ret = json[:i]
+			}
+			return ret, unescape(json[1:i])
+		}
+	}
+	return json, json[1:]
+}
+
+// unescape unescapes a string
+func unescape(json string) string {
+	var str = make([]byte, 0, len(json))
+	for i := 0; i < len(json); i++ {
+		switch {
+		default:
+			str = append(str, json[i])
+		case json[i] < ' ':
+			return string(str)
+		case json[i] == '\\':
+			i++
+			if i >= len(json) {
+				return string(str)
+			}
+			switch json[i] {
+			default:
+				return string(str)
+			case '\\':
+				str = append(str, '\\')
+			case '/':
+				str = append(str, '/')
+			case 'b':
+				str = append(str, '\b')
+			case 'f':
+				str = append(str, '\f')
+			case 'n':
+				str = append(str, '\n')
+			case 'r':
+				str = append(str, '\r')
+			case 't':
+				str = append(str, '\t')
+			case '"':
+				str = append(str, '"')
+			case 'u':
+				if i+5 > len(json) {
+					return string(str)
+				}
+				r := runeit(json[i+1:])
+				i += 5
+				if utf16.IsSurrogate(r) {
+					// need another code
+					if len(json[i:]) >= 6 && json[i] == '\\' &&
+						json[i+1] == 'u' {
+						// we expect it to be correct so just consume it
+						r = utf16.DecodeRune(r, runeit(json[i+2:]))
+						i += 6
+					}
+				}
+				// provide enough space to encode the largest utf8 possible
+				str = append(str, 0, 0, 0, 0, 0, 0, 0, 0)
+				n := utf8.EncodeRune(str[len(str)-8:], r)
+				str = str[:len(str)-8+n]
+				i-- // backtrack index by one
+			}
+		}
+	}
+	return string(str)
+}
+
+// runeit returns the rune from the the \uXXXX
+func runeit(json string) rune {
+	n, _ := strconv.ParseUint(json[:4], 16, 64)
+	return rune(n)
+}
+
+// Exists returns true if value exists.
+//
+//  if gjson.Get(json, "name.last").Exists(){
+//		println("value exists")
+//  }
+func (t GJsonResult) Exists() bool {
+	return t.Type != GJsonNull || len(t.Raw) != 0
 }

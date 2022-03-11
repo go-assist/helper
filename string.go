@@ -17,10 +17,9 @@ import (
 )
 
 //ByteToString byte转string
-func (ts *TsStr) ByteToString(b *[]byte) *string {
-	s := bytes.NewBuffer(*b)
-	toStr := s.String()
-	return &toStr
+func (ts *TsStr) ByteToString(b []byte) (toStr string) {
+	toStr = bytes.NewBuffer(b).String()
+	return
 }
 
 // ConvString 转换为string

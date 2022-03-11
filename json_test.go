@@ -71,9 +71,10 @@ func TestJsonEncode(t *testing.T) {
 	if err != nil {
 		t.Errorf("JsonEncode errors: %v\n", err)
 	}
-	_, err = TJson.ParseJson(*TStr.ByteToString(&bJson))
+
+	_, err = TJson.ParseJson(string(bJson))
 	if err != nil {
-		t.Errorf("JsonEncode parse json errors of %v \n", err.Error())
+		t.Errorf("JsonEncode ParseJson errors of %v \n", err.Error())
 	}
 }
 

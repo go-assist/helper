@@ -1,29 +1,29 @@
 package helper
 
 import (
-	"encoding/json"
+	"bytes"
 	"errors"
 	jsonIter "github.com/json-iterator/go"
 	"github.com/mitchellh/mapstructure"
-	"github.com/tidwall/gjson"
-	"log"
 	"reflect"
 )
 
 // ParseJson Json校验.
-func (tj *TsJson) ParseJson(jsonStr string) (result gjson.Result, err error) {
-	if !gjson.Valid(jsonStr) || !TStr.IsJSON(jsonStr){
+func (tj *TsJson) ParseJson(jsonStr string) (r GJsonResult, err error) {
+	if !TStr.IsJSONGJson(jsonStr) || !TStr.IsJSON(jsonStr){
 		err = errors.New("invalid json")
 		return
 	}
-	result = gjson.Parse(jsonStr)
+	r = parseJson(jsonStr)
 	return
 }
 
 // MapToJson map转为json字符串.
-func (tj *TsJson) MapToJson(m map[string]interface{}) string {
-	m2Json , _ := json.Marshal(m)
-	return string(m2Json)
+func (tj *TsJson) MapToJson(m map[string]interface{}) (j string) {
+	var jsons = jsonIter.ConfigCompatibleWithStandardLibrary
+	m2Json , _ := jsons.Marshal(m)
+	j = string(m2Json)
+	return
 }
 
 // JsonToMap json 转map.
@@ -31,9 +31,9 @@ func (tj *TsJson) JsonToMap(jsonStr string) (convert map[string]interface{}) {
 	if jsonStr == "" || !TStr.IsJSON(jsonStr) {
 		return convert
 	}
-	err := json.Unmarshal([]byte(jsonStr), &convert)
+	var jsons = jsonIter.ConfigCompatibleWithStandardLibrary
+	err := jsons.Unmarshal([]byte(jsonStr), &convert)
 	if err != nil {
-		log.Println(err)
 		return
 	}
 	return
@@ -45,9 +45,9 @@ func (tj *TsJson) JsonToMapArr(jsonStr string) (convert []map[string]interface{}
 	if jsonStr == "" || !TStr.IsJSON(jsonStr){
 		return convert
 	}
-	err := json.Unmarshal([]byte(jsonStr), &convert)
+	var jsons = jsonIter.ConfigCompatibleWithStandardLibrary
+	err := jsons.Unmarshal([]byte(jsonStr), &convert)
 	if err != nil {
-		log.Println(err)
 		return
 	}
 	return
@@ -72,10 +72,18 @@ func (tj *TsJson) MapToStruct(obj interface{}, outStruct interface{}) (interface
 	return outStruct, err
 }
 
-// JsonEncode 对变量进行 JSON 编码.
-func (tj *TsJson) JsonEncode(val interface{}) ([]byte, error) {
+// JsonEncode 对变量进行 JSON 编码并去除转移字符.
+func (tj *TsJson) JsonEncode(val interface{}) (b []byte, err error) {
 	var jsons = jsonIter.ConfigCompatibleWithStandardLibrary
-	return jsons.Marshal(val)
+	bf := bytes.NewBuffer([]byte{})
+	jsonEncoder := jsons.NewEncoder(bf)
+	jsonEncoder.SetEscapeHTML(false)
+	err = jsonEncoder.Encode(val)
+	if err != nil {
+		return
+	}
+	b = []byte(bf.String())
+	return
 }
 
 // JsonDecode 对 JSON 格式的字符串进行解码,注意val使用指针.
