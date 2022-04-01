@@ -1,4 +1,4 @@
-module github.com/golangtoolkit/helper
+module github.com/go-assist/helper
 
 go 1.15
 

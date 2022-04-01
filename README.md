@@ -1,5 +1,5 @@
 # Helper
-##### 1.仓库迁移至☞ https://github.com/golangtoolkit/helper
+##### 1.仓库迁移至☞ https://github.com/go-assist/helper
 
 
 ##### 2.一些常用的助手函数工具包
@@ -42,7 +42,7 @@ json (TJson)
 ##### 3.获取 ❤❤❤
 go version >= 1.15
 
-go get github.com/golangtoolkit/helper
+go get github.com/go-assist/helper
 
 ##### 4. 示例 for example 
 
@@ -51,7 +51,7 @@ package helper
 
 import (
 	"fmt"
-	"github.com/golangtoolkit/helper"
+	"github.com/go-assist/helper"
 )
 
 func example() {
@@ -91,10 +91,10 @@ func example() {
 	inter := helper.TConv.Int2Str(s1)
 	fmt.Println(inter) // 123456
 
-	// hash
+	// hash, 此方法可以用来获取0-100区间的随机值
 	h := "abc123tre"
-	hashcode := helper.THash.HashCode(h)
-	fmt.Println(hashcode) // 44 
+	hashcode := helper.THash.HashCode(h, 2)
+	fmt.Println(hashcode) // 52 
 
 	// os
 	endian := helper.TOs.GetEndian()
