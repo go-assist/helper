@@ -615,3 +615,16 @@ func TestMbSubstr(t *testing.T) {
 		}
 	}
 }
+
+func TestDoZlibCompressAndUnCompress(t *testing.T) {
+	zipStr := `我是一只小小的goper,写呀写呀写bug`
+	zip, _ := TStr.DoZlibCompress([]byte(zipStr))
+
+	unzip, _ := TStr.DoZlibUnCompress(zip)
+	unzipString := string(unzip)
+
+	if zipStr != unzipString {
+		t.Errorf("zip string is %v, not %v", zipStr, unzipString)
+		return
+	}
+}

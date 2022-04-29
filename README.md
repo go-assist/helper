@@ -129,6 +129,13 @@ func example() {
 	isEven := helper.TInt.IsEven(3)
 	fmt.Println(isEven) // false
 	
+	// zlib string
+	zip, _ := helper.TStr.DoZlibCompress([]byte(`我是一只小小的goper,写呀写呀写bug`))
+	fmt.Println(zip)
+	unzip, _ := helper.TStr.DoZlibUnCompress(zip)
+	unzipString := string(unzip)
+	fmt.Println(unzipString)
+	
 	// ... other 
 }
 ```

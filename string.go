@@ -2,12 +2,14 @@ package helper
 
 import (
 	"bytes"
+	"compress/zlib"
 	"crypto/md5"
 	_ "crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
 	"math/rand"
 	"reflect"
 	"strconv"
@@ -448,5 +450,36 @@ func (ts *TsStr) MbSubstr(str string, start int, length ...int) (mb string) {
 		end = max
 	}
 	mb = string(runes[start:end])
+	return
+}
+
+// DoZlibCompress zlib压缩字符串 .
+func (ts *TsStr) DoZlibCompress(src []byte) (compress []byte, err error) {
+	var in bytes.Buffer
+	defer in.Reset()
+	w := zlib.NewWriter(&in)
+	_, err = w.Write(src)
+	if err != nil {
+		return
+	}
+	err = w.Close()
+	if err != nil {
+		return
+	}
+	compress = in.Bytes()
+	return
+}
+
+// DoZlibUnCompress 解压zlib字符串 .
+func (ts *TsStr) DoZlibUnCompress(compressSrc []byte) (unCompress []byte, err error) {
+	b := bytes.NewReader(compressSrc)
+	var out bytes.Buffer
+	defer out.Reset()
+	r, _ := zlib.NewReader(b)
+	_, err = io.Copy(&out, r)
+	if err != nil {
+		return
+	}
+	unCompress = out.Bytes()
 	return
 }
