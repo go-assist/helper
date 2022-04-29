@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-// Abs 绝对值
+// Abs 绝对值.
 func (ti *TsInt) Abs(n int64) (i int64) {
 	y := n >> 63
 	i = (n ^ y) - y

@@ -18,13 +18,13 @@ import (
 	"unicode"
 )
 
-//ByteToString byte转string
+//ByteToString byte转string.
 func (ts *TsStr) ByteToString(b []byte) (toStr string) {
 	toStr = bytes.NewBuffer(b).String()
 	return
 }
 
-// ConvString 转换为string
+// ConvString 转换为string.
 func (ts *TsStr) ConvString(i interface{}) (s string) {
 	switch i.(type) {
 	case int:
@@ -43,20 +43,20 @@ func (ts *TsStr) ConvString(i interface{}) (s string) {
 	return
 }
 
-// Base64Encode base64编码
+// Base64Encode base64编码.
 func (ts *TsStr) Base64Encode(encodeStr string) string {
 	base64Str := encodeStr
 	base64Byte := []byte(base64Str)
 	return base64.StdEncoding.EncodeToString(base64Byte)
 }
 
-// StructName 获取结构体名
+// StructName 获取结构体名.
 func (ts *TsStr) StructName(i interface{}) (s string) {
 	s = reflect.TypeOf(i).Elem().Name()
 	return
 }
 
-// CalculatePercentage 百分比
+// CalculatePercentage 百分比.
 func (ts *TsStr) CalculatePercentage(compare int, toBeCompare int) (p string) {
 	if toBeCompare == 0 {
 		return "0.00%"
@@ -74,7 +74,7 @@ func (ts *TsStr) CalculatePercentage(compare int, toBeCompare int) (p string) {
 }
 
 
-// RandStringRunes 返回随机字符串
+// RandStringRunes 返回随机字符串.
 func (ts *TsStr) RandStringRunes(n int) (random string) {
 	letterRunes := []rune("1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	rand.Seed(time.Now().UnixNano())
@@ -86,7 +86,7 @@ func (ts *TsStr) RandStringRunes(n int) (random string) {
 	return
 }
 
-// RandomString 生成随机字符串
+// RandomString 生成随机字符串.
 func (ts *TsStr) RandomString(length uint8, sType RandomString) (random string) {
 	if length == 0 {
 		return ""
@@ -123,7 +123,7 @@ func (ts *TsStr) RandomString(length uint8, sType RandomString) (random string) 
 	return
 }
 
-// GetBetweenStr 截取指定字符串
+// GetBetweenStr 截取指定字符串.
 func (ts *TsStr) GetBetweenStr(str, start string, end string) (sub string) {
 	n := strings.Index(str, start)
 	if n == -1 {
@@ -138,7 +138,7 @@ func (ts *TsStr) GetBetweenStr(str, start string, end string) (sub string) {
 	return
 }
 
-// Substr 字符串截取
+// Substr 字符串截取.
 func (ts *TsStr) Substr(str string, start int, length int) (sub string) {
 	intercept := []rune(str)
 	rl := len(intercept)
@@ -169,7 +169,7 @@ func (ts *TsStr) Substr(str string, start int, length int) (sub string) {
 	return
 }
 
-// SubStrLeftOrRight 从左右截取指定字符串
+// SubStrLeftOrRight 从左右截取指定字符串.
 func (ts *TsStr) SubStrLeftOrRight(str string, target string, direction string, hasPos bool) (string, error) {
 	pos := strings.Index(str, target)
 	if pos == -1 {
@@ -190,14 +190,14 @@ func (ts *TsStr) SubStrLeftOrRight(str string, target string, direction string, 
 	return "", errors.New("parameter error")
 }
 
-// MD5 md5字符串
+// MD5 md5字符串.
 func (ts *TsStr) MD5(md5Str string) (md5str string) {
 	md5Byte := []byte(md5Str)
 	md5str = strings.ToUpper(fmt.Sprintf("%x", md5.Sum(md5Byte)))
 	return
 }
 
-// UcFirst 首字符大写
+// UcFirst 首字符大写.
 func (ts *TsStr) UcFirst(str string) string {
 	for _, v := range str {
 		u := string(unicode.ToUpper(v))
@@ -206,7 +206,7 @@ func (ts *TsStr) UcFirst(str string) string {
 	return ""
 }
 
-// LcFirst 首字母小写
+// LcFirst 首字母小写.
 func (ts *TsStr) LcFirst(str string) string {
 	for _, v := range str {
 		u := string(unicode.ToLower(v))
@@ -215,12 +215,12 @@ func (ts *TsStr) LcFirst(str string) string {
 	return ""
 }
 
-// UcWords 将字符串中每个词的首字母转换为大写
+// UcWords 将字符串中每个词的首字母转换为大写.
 func (ts *TsStr) UcWords(str string) string {
 	return strings.Title(str)
 }
 
-// LcWords 单词首字母小写
+// LcWords 单词首字母小写.
 func (ts *TsStr) LcWords(str string) string {
 	buf := &bytes.Buffer{}
 	lastIsSpace := true
@@ -244,7 +244,7 @@ func (ts *TsStr) LcWords(str string) string {
 	return buf.String()
 }
 
-// Shuffle 打乱字符串
+// Shuffle 打乱字符串.
 func (ts *TsStr) Shuffle(str string) (shuffle string) {
 	if str == "" {
 		return str
@@ -264,7 +264,7 @@ func (ts *TsStr) Shuffle(str string) (shuffle string) {
 	return
 }
 
-// StropsFirstFind 查找字符串首次出现的位置,不区分大小写
+// StropsFirstFind 查找字符串首次出现的位置,不区分大小写.
 func (ts *TsStr) StropsFirstFind(haystack, needle string, offset int) (location int) {
 	length := len(haystack)
 	if length == 0 || offset > length || -offset > length {
@@ -284,7 +284,7 @@ func (ts *TsStr) StropsFirstFind(haystack, needle string, offset int) (location 
 	return
 }
 
-// StropsFirst 查找字符串首次出现的位置,找不到时返回-1.haystack在该字符串中进行查找,needle要查找的字符串,offset起始位置
+// StropsFirst 查找字符串首次出现的位置,找不到时返回-1.haystack在该字符串中进行查找,needle要查找的字符串,offset起始位置.
 func (ts *TsStr) StropsFirst(haystack, needle string, offset int) (location int) {
 	length := len(haystack)
 	if length == 0 || offset > length || -offset > length {
@@ -304,7 +304,7 @@ func (ts *TsStr) StropsFirst(haystack, needle string, offset int) (location int)
 	return
 }
 
-// StropsLast 查找指定字符串在目标字符串中最后一次出现的位置
+// StropsLast 查找指定字符串在目标字符串中最后一次出现的位置.
 func (ts *TsStr) StropsLast(haystack, needle string, offset int) (pos int) {
 	pos, length := 0, len(haystack)
 	if length == 0 || offset > length || -offset > length {
@@ -323,7 +323,7 @@ func (ts *TsStr) StropsLast(haystack, needle string, offset int) (pos int) {
 	return
 }
 
-// StropsLastFind 查找指定字符串在目标字符串中最后一次出现的位置,不区分大小写
+// StropsLastFind 查找指定字符串在目标字符串中最后一次出现的位置,不区分大小写.
 func (ts *TsStr) StropsLastFind(haystack, needle string, offset int) (pos int) {
 	pos, length := 0, len(haystack)
 	if length == 0 || offset > length || -offset > length {
@@ -343,7 +343,7 @@ func (ts *TsStr) StropsLastFind(haystack, needle string, offset int) (pos int) {
 	return
 }
 
-// Reverse 翻转字符串
+// Reverse 翻转字符串.
 func (ts *TsStr) Reverse(str string) (strRev string) {
 	n := len(str)
 	runes := make([]rune, n)
@@ -370,21 +370,21 @@ func (ts *TsStr) Md5Hex(str []byte, length uint8) (md5Byte []byte) {
 	return
 }
 
-// Trim 去除字符串首尾处的空白字符（或者其他字符）.
+// Trim 去除字符串首尾处的空白字符或者其他字符.
 func (ts *TsStr) Trim(str string, characterMask ...string) (trim string) {
 	mask := getTrimMask(characterMask)
 	trim = strings.Trim(str, mask)
 	return
 }
 
-// Ltrim 删除字符串开头的空白字符（或其他字符）.
+// Ltrim 删除字符串开头的空白字符或其他字符.
 func (ts *TsStr) Ltrim(str string, characterMask ...string) (trimL string) {
 	mask := getTrimMask(characterMask)
 	trimL = strings.TrimLeft(str, mask)
 	return
 }
 
-// Rtrim 删除字符串末端的空白字符（或者其他字符）.
+// Rtrim 删除字符串末端的空白字符或者其他字符.
 func (ts *TsStr) Rtrim(str string, characterMask ...string) (trimR string) {
 	mask := getTrimMask(characterMask)
 	trimR = strings.TrimRight(str, mask)
@@ -392,7 +392,7 @@ func (ts *TsStr) Rtrim(str string, characterMask ...string) (trimR string) {
 }
 
 // DStrPos 检查字符串str是否包含数组arr的元素之一,返回检查结果和匹配的字符串.
-// chkCase为是否检查大小写
+// chkCase为是否检查大小写.
 func (ts *TsStr) DStrPos(str string, arr []string, chkCase bool) (r bool, s string) {
 	if len(str) == 0 || len(arr) == 0 {
 		return
@@ -453,7 +453,7 @@ func (ts *TsStr) MbSubstr(str string, start int, length ...int) (mb string) {
 	return
 }
 
-// DoZlibCompress zlib压缩字符串 .
+// DoZlibCompress zlib压缩字符串.
 func (ts *TsStr) DoZlibCompress(src []byte) (compress []byte, err error) {
 	var in bytes.Buffer
 	defer in.Reset()
@@ -470,7 +470,7 @@ func (ts *TsStr) DoZlibCompress(src []byte) (compress []byte, err error) {
 	return
 }
 
-// DoZlibUnCompress 解压zlib字符串 .
+// DoZlibUnCompress 解压zlib字符串.
 func (ts *TsStr) DoZlibUnCompress(compressSrc []byte) (unCompress []byte, err error) {
 	b := bytes.NewReader(compressSrc)
 	var out bytes.Buffer

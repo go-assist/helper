@@ -147,7 +147,6 @@ func (ts *TsStr) HasSpecialChar(str string) (res bool) {
 	if str == "" {
 		return
 	}
-
 	for _, r := range str {
 		// IsPunct 判断 r 是否为一个标点字符 (类别 P)
 		// IsSymbol 判断 r 是否为一个符号字符
@@ -157,7 +156,6 @@ func (ts *TsStr) HasSpecialChar(str string) (res bool) {
 			return
 		}
 	}
-
 	return
 }
 
@@ -186,7 +184,6 @@ func (ts *TsStr) IsIPv4(str string) bool {
 	if ipAddr == nil {
 		return false
 	}
-
 	return ipAddr.To4() != nil && strings.ContainsRune(str, '.')
 }
 
@@ -205,7 +202,6 @@ func (ts *TsStr) IsPort(val interface{}) (r bool) {
 			 return
 		}
 	}
-
 	return
 }
 
@@ -240,34 +236,35 @@ func (ts *TsStr) IsHost(str string) bool {
 }
 
 // IsEmail 检查字符串是否邮箱.参数validateTrue,是否验证邮箱主机的真实性.
-func (ts *TsStr) IsEmail(email string, validateHost bool) (bool, error) {
+func (ts *TsStr) IsEmail(email string, validateHost bool) (r bool, err error) {
 	//长度检查
 	length := len(email)
 	at := strings.LastIndexByte(email, '@')
 	if (length < 6 || length > 254) || (at <= 0 || at > length-3) {
-		return false, fmt.Errorf("invalid email length")
+		err = fmt.Errorf("invalid email length")
+		return
 	}
-
 	// 验证邮箱格式
 	chkFormat := RegEmail.MatchString(email)
 	if !chkFormat {
-		return false, fmt.Errorf("invalid email format")
+		err = fmt.Errorf("invalid email format")
+		return
 	}
-
 	// 验证主机
 	if validateHost {
 		host := email[at+1:]
-		if _, err := net.LookupMX(host); err != nil {
+		if _, netErr := net.LookupMX(host); netErr != nil {
 			// 因无法确定mx主机的smtp端口,所以去掉Hello/Mail/Rcpt检查邮箱是否存在
 			// 仅检查主机是否有效
 			// 仅对国内几家大的邮件厂家进行检查
-			if _, err = net.LookupIP(host); err != nil {
-				return false, err
+			if _, netErr = net.LookupIP(host); netErr != nil {
+				err = netErr
+				return
 			}
 		}
 	}
-
-	return true, nil
+	r = true
+	return
 }
 
 // IsMobileCN 检查字符串是否中国大陆手机号.
@@ -286,15 +283,15 @@ func (ts *TsStr) IsPhone(str string) bool {
 }
 
 // IsCreditNo 检查是否(15或18位)身份证号码,并返回经校验的号码.
-func (ts *TsStr) IsCreditNo(str string) (bool, string) {
+func (ts *TsStr) IsCreditNo(str string) (r bool, idCard string) {
 	chk := str != "" && RegCreditNo.MatchString(str)
 	if !chk {
-		return false, ""
+		return
 	}
 
 	// 检查省份代码
 	if _, chk = CreditArea[str[0:2]]; !chk {
-		return false, ""
+		return
 	}
 
 	// 将15位身份证升级到18位
@@ -317,20 +314,21 @@ func (ts *TsStr) IsCreditNo(str string) (bool, string) {
 	chk, tim := TTime.IsDate2time(birthday)
 	now := TTime.Time()
 	if !chk {
-		return false, ""
-	} else if tim >= now {
-		return false, ""
+		return
 	}
-
+	if tim >= now {
+		return
+	}
 	// 18位身份证需要验证最后一位校验位
 	if length == 18 {
 		str = strings.ToUpper(str)
 		if str[17] != creditChecksum(str) {
-			return false, ""
+			return
 		}
 	}
-
-	return true, str
+	r = true
+	idCard = str
+	return
 }
 
 // IsAlphaNumeric 是否字母或数字.
@@ -388,7 +386,6 @@ func (ts *TsStr) IsBase64Image(str string) bool {
 	if str == "" || !strings.ContainsRune(str, ',') {
 		return false
 	}
-
 	dataURI := strings.Split(str, ",")
 	return RegBase64Image.MatchString(dataURI[0]) && RegBase64.MatchString(dataURI[1])
 }
@@ -548,16 +545,17 @@ func (ta *TsArr) IsMapBySprintf(i interface{}) bool {
 //	0000-00-00 00:00:00
 //	0000/00/00 00:00:00
 // 等日期格式.
-func (tk *TsTime) IsDate2time(str string) (bool, int64) {
+func (tk *TsTime) IsDate2time(str string) (r bool, d int64) {
 	if str == "" {
-		return false, 0
-	} else if strings.ContainsRune(str, '/') {
+		return
+	}
+	if strings.ContainsRune(str, '/') {
 		str = strings.Replace(str, "/", "-", -1)
 	}
 
 	chk := RegDatetime.MatchString(str)
 	if !chk {
-		return false, 0
+		return
 	}
 
 	leng := len(str)
@@ -566,12 +564,12 @@ func (tk *TsTime) IsDate2time(str string) (bool, int64) {
 		str = str + reference[leng:19]
 	}
 
-	tim, err := TTime.Str2Timestamp(str)
+	d, err := TTime.Str2Timestamp(str)
 	if err != nil {
-		return false, 0
+		return
 	}
-
-	return true, tim
+	r = true
+	return
 }
 
 // IsNan 是否为“非数值”.
@@ -744,13 +742,13 @@ func (tf *TsFloat) AverageFloat64(nums ...float64) (res float64) {
 	length := len(nums)
 	if length == 0 {
 		return
-	} else if length == 1 {
-		res = nums[0]
-	} else {
-		total := tf.SumFloat64(nums...)
-		res = total / float64(length)
 	}
-
+	if length == 1 {
+		res = nums[0]
+		return
+	}
+	total := tf.SumFloat64(nums...)
+	res = total / float64(length)
 	return
 }
 

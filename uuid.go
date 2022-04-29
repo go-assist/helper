@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-// Uuid 生成uuid
+// Uuid 生成uuid.
 func (tu *TsUuid) Uuid() (newUuid string) {
 	fileId, uuidErr := uuid.NewV4()
 	if uuidErr != nil {

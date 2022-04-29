@@ -66,7 +66,7 @@ func (tj *TsJson) StructToMap(obj interface{}) map[string]interface{} {
 	return convert
 }
 
-// MapToStruct map转struct
+// MapToStruct map转struct.
 func (tj *TsJson) MapToStruct(obj interface{}, outStruct interface{}) (interface{}, error) {
 	err := mapstructure.Decode(obj, &outStruct)
 	return outStruct, err

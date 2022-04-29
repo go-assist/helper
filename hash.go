@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// HashCode 分布式HashCode
+// HashCode 分布式HashCode.
 func (th *TsHash) HashCode (did string, step int) (score int) {
 	didByte := []byte(did)
 	md5Str := fmt.Sprintf("%X", md5.Sum(didByte))

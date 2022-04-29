@@ -32,6 +32,5 @@ func TestGetDomain(t *testing.T) {
 			t.Errorf("Expected GetDomain(%q) to be %v, got is %v \n", test.param, test.expected, actual)
 		}
 	}
-
 	TUri.GetDomain("123456")
 }

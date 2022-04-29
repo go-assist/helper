@@ -44,7 +44,7 @@ func (te *TsEncrypt) Base64UrlEncode(source []byte) (safeUrl string) {
 	safeUrl = strings.Replace(byteArr, "/", "_", -1)
 	safeUrl = strings.Replace(safeUrl, "+", "-", -1)
 	safeUrl = strings.Replace(safeUrl, "=", "", -1)
-	return safeUrl
+	return
 }
 
 // Base64UrlDecode url安全的Base64Decode.
@@ -252,7 +252,7 @@ func (te *TsEncrypt) EasyDecrypt(val, key string) (decr string) {
 	return
 }
 
-// HmacShaX HmacSHA-x加密,x为1/256/512 .
+// HmacShaX HmacSHA-x加密,x为1/256/512.
 func (te *TsEncrypt) HmacShaX(data, secret []byte, x uint16) (hr string) {
 	// Create a new HMAC by defining the hash type and the key (as byte array)
 	var h hash.Hash
