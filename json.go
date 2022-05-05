@@ -10,7 +10,7 @@ import (
 
 // ParseJson Json校验.
 func (tj *TsJson) ParseJson(jsonStr string) (r GJsonResult, err error) {
-	if !TStr.IsJSONGJson(jsonStr) || !TStr.IsJSON(jsonStr){
+	if !TValidate.IsJSONGJson(jsonStr) || !TValidate.IsJSON(jsonStr) {
 		err = errors.New("invalid json")
 		return
 	}
@@ -21,14 +21,14 @@ func (tj *TsJson) ParseJson(jsonStr string) (r GJsonResult, err error) {
 // MapToJson map转为json字符串.
 func (tj *TsJson) MapToJson(m map[string]interface{}) (j string) {
 	var jsons = jsonIter.ConfigCompatibleWithStandardLibrary
-	m2Json , _ := jsons.Marshal(m)
+	m2Json, _ := jsons.Marshal(m)
 	j = string(m2Json)
 	return
 }
 
 // JsonToMap json 转map.
 func (tj *TsJson) JsonToMap(jsonStr string) (convert map[string]interface{}) {
-	if jsonStr == "" || !TStr.IsJSON(jsonStr) {
+	if jsonStr == "" || !TValidate.IsJSON(jsonStr) {
 		return convert
 	}
 	var jsons = jsonIter.ConfigCompatibleWithStandardLibrary
@@ -39,10 +39,9 @@ func (tj *TsJson) JsonToMap(jsonStr string) (convert map[string]interface{}) {
 	return
 }
 
-
 // JsonToMapArr json转map数组.
 func (tj *TsJson) JsonToMapArr(jsonStr string) (convert []map[string]interface{}) {
-	if jsonStr == "" || !TStr.IsJSON(jsonStr){
+	if jsonStr == "" || !TValidate.IsJSON(jsonStr) {
 		return convert
 	}
 	var jsons = jsonIter.ConfigCompatibleWithStandardLibrary
@@ -59,7 +58,7 @@ func (tj *TsJson) StructToMap(obj interface{}) map[string]interface{} {
 	if isStruct(obj) {
 		typeOf := reflect.TypeOf(obj)
 		valueOf := reflect.ValueOf(obj)
-		for i := 0; i < typeOf.NumField(); i ++ {
+		for i := 0; i < typeOf.NumField(); i++ {
 			convert[typeOf.Field(i).Name] = valueOf.Field(i).Interface()
 		}
 	}

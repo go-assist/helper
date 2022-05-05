@@ -97,7 +97,7 @@ func (tf *TsFile) Rename(oldName string, newName string) error {
 func (tf *TsFile) Touch(filePath string, size int64) (r bool) {
 	//创建目录
 	destDir := filepath.Dir(filePath)
-	if destDir != "" && !tf.IsDir(destDir) {
+	if destDir != "" && !TValidate.IsDir(destDir) {
 		if err := os.MkdirAll(destDir, 0766); err != nil {
 			return
 		}
@@ -130,7 +130,7 @@ func (tf *TsFile) Remove(filePath string) error {
 // DelDir 删除目录;delRoot为true时连该目录一起删除,为false时只清空该目录.
 func (tf *TsFile) DelDir(dir string, delRoot bool) (err error) {
 	realPath := tf.AbsPath(dir)
-	if !tf.IsDir(realPath) {
+	if !TValidate.IsDir(realPath) {
 		err = errors.New("Dir does not exists:" + dir)
 		return
 	}

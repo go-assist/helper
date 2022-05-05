@@ -616,16 +616,16 @@ func (to *TsOs) GetSystemInfo() *SystemInfo {
 		CpuUser:      cpuUserRate,
 		CpuFree:      cpuFreeRate,
 		//DiskUsed:     diskUsed,
-		DiskUsed:     0,
+		DiskUsed: 0,
 		//DiskFree:     diskFree,
-		DiskFree:     0,
+		DiskFree: 0,
 		//DiskTotal:    diskTotal,
-		DiskTotal:    0,
+		DiskTotal: 0,
 		//MemUsed:      memUsed,
-		MemUsed:      0,
-		MemSys:       mstat.Sys,
+		MemUsed: 0,
+		MemSys:  mstat.Sys,
 		//MemFree:      memFree,
-		MemFree:      0,
+		MemFree: 0,
 		//MemTotal:     memTotal,
 		MemTotal:     0,
 		AllocGolang:  mstat.Alloc,
@@ -642,7 +642,7 @@ func (to *TsOs) GetSystemInfo() *SystemInfo {
 
 // IsPortOpen 检查主机端口是否开放.protocols为协议名称,可选,默认tcp.
 func (to *TsOs) IsPortOpen(host string, port interface{}, protocols ...string) bool {
-	if TStr.IsHost(host) && TStr.IsPort(port) {
+	if TValidate.IsHost(host) && TValidate.IsPort(port) {
 		// 默认tcp协议
 		protocol := "tcp"
 		if len(protocols) > 0 && len(protocols[0]) > 0 {

@@ -7,49 +7,50 @@ import (
 )
 
 var (
-	TArr 		 TsArr
-	TStr 		 TsStr // transfer
-	TInt         TsInt
-	TFloat 		 TsFloat
-	TFile		 TsFile
-	TUri         TsUri
-	THash        TsHash
-	TCallFunc    TsCallFunc
-	TDebug       TsDebug
-	TOs          TsOs
-	TConv        TsConvert
-	TTime        TsTime
-	TUuid        TsUuid
-	TCorn        TsCorn
-	TJson		 TsJson
-	TEncrypt	 TsEncrypt
-	TPrivyCiders []*net.IPNet
-	NowTime 				 = time.Now()
-	RegDNSName               = regexp.MustCompile(PatternDNSName)
-	RegMultiByte             = regexp.MustCompile(PatternMultibyte)
-	RegFloat                 = regexp.MustCompile(PatternFloat)
-	RegFullWidth             = regexp.MustCompile(PatternFullwidth)
-	RegHalfWidth             = regexp.MustCompile(PatternHalfWidth)
-	RegAlphaLower            = regexp.MustCompile(PatternAlphaLower)
-	RegAlphaUpper            = regexp.MustCompile(PatternAlphaUpper)
-	RegChineseAll            = regexp.MustCompile(PatternChineseAll)
-	RegChineseName           = regexp.MustCompile(PatternChineseName)
-	RegEmail                 = regexp.MustCompile(PatternEmail)
-	RegMobileCN              = regexp.MustCompile(PatternMobileCN)
-	RegTelephone             = regexp.MustCompile(PatternTelephone)
-	RegPhone                 = regexp.MustCompile(PatternPhone)
-	RegCreditNo              = regexp.MustCompile(PatternCreditNo)
-	RegDatetime              = regexp.MustCompile(PatternDatetime)
-	RegAlphaNumeric          = regexp.MustCompile(PatternAlphaNumeric)
-	RegRGBColor              = regexp.MustCompile(PatternRGBColor)
-	RegWhitespaceAll         = regexp.MustCompile(PatternWhitespaceAll)
-	RegWhitespaceHas         = regexp.MustCompile(PatternWhitespaceHas)
-	RegBase64                = regexp.MustCompile(PatternBase64)
-	RegBase64Image           = regexp.MustCompile(PatternBase64Image)
-	RegMd5                   = regexp.MustCompile(PatternMd5)
-	RegSha1                  = regexp.MustCompile(PatternSha1)
-	RegSha256                = regexp.MustCompile(PatternSha256)
-	RegSha512                = regexp.MustCompile(PatternSha512)
+	TArr             TsArr
+	TStr             TsStr // transfer
+	TInt             TsInt
+	TFloat           TsFloat
+	TFile            TsFile
+	TUri             TsUri
+	THash            TsHash
+	TCallFunc        TsCallFunc
+	TDebug           TsDebug
+	TOs              TsOs
+	TConv            TsConvert
+	TTime            TsTime
+	TUuid            TsUuid
+	TCorn            TsCorn
+	TValidate        TsValidate
+	TJson            TsJson
+	TEncrypt         TsEncrypt
+	TPrivyCiders     []*net.IPNet
+	NowTime          = time.Now()
+	RegDNSName       = regexp.MustCompile(PatternDNSName)
+	RegMultiByte     = regexp.MustCompile(PatternMultibyte)
+	RegFloat         = regexp.MustCompile(PatternFloat)
+	RegFullWidth     = regexp.MustCompile(PatternFullwidth)
+	RegHalfWidth     = regexp.MustCompile(PatternHalfWidth)
+	RegAlphaLower    = regexp.MustCompile(PatternAlphaLower)
+	RegAlphaUpper    = regexp.MustCompile(PatternAlphaUpper)
+	RegChineseAll    = regexp.MustCompile(PatternChineseAll)
+	RegChineseName   = regexp.MustCompile(PatternChineseName)
+	RegEmail         = regexp.MustCompile(PatternEmail)
+	RegMobileCN      = regexp.MustCompile(PatternMobileCN)
+	RegTelephone     = regexp.MustCompile(PatternTelephone)
+	RegPhone         = regexp.MustCompile(PatternPhone)
+	RegCreditNo      = regexp.MustCompile(PatternCreditNo)
+	RegDatetime      = regexp.MustCompile(PatternDatetime)
+	RegAlphaNumeric  = regexp.MustCompile(PatternAlphaNumeric)
+	RegRGBColor      = regexp.MustCompile(PatternRGBColor)
+	RegWhitespaceAll = regexp.MustCompile(PatternWhitespaceAll)
+	RegWhitespaceHas = regexp.MustCompile(PatternWhitespaceHas)
+	RegBase64        = regexp.MustCompile(PatternBase64)
+	RegBase64Image   = regexp.MustCompile(PatternBase64Image)
+	RegMd5           = regexp.MustCompile(PatternMd5)
+	RegSha1          = regexp.MustCompile(PatternSha1)
+	RegSha256        = regexp.MustCompile(PatternSha256)
+	RegSha512        = regexp.MustCompile(PatternSha512)
 	// CreditArea 身份证区域
 	CreditArea = map[string]string{
 		"11": "北京",

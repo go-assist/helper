@@ -84,7 +84,7 @@ func TestMaxMinFloat64(t *testing.T) {
 
 func TestIsNegative(t *testing.T) {
 	for _, test := range exampleFloatIsNegative {
-		actual := TFloat.IsNegative(test.param)
+		actual := TValidate.IsNegative(test.param)
 		if actual != test.expected {
 			t.Errorf("Expected IsNegative(%v) to be %v, got %v", test.param, test.expected, actual)
 		}
@@ -93,7 +93,7 @@ func TestIsNegative(t *testing.T) {
 
 func TestIsPositive(t *testing.T) {
 	for _, test := range exampleFloatIsPositive {
-		actual := TFloat.IsPositive(test.param)
+		actual := TValidate.IsPositive(test.param)
 		if actual != test.expected {
 			t.Errorf("Expected IsPositive(%v) to be %v, got %v", test.param, test.expected, actual)
 		}
@@ -102,7 +102,7 @@ func TestIsPositive(t *testing.T) {
 
 func TestIsNonNegative(t *testing.T) {
 	for _, test := range exampleFloatIsNonNegative {
-		actual := TFloat.IsNonNegative(test.param)
+		actual := TValidate.IsNonNegative(test.param)
 		if actual != test.expected {
 			t.Errorf("Expected IsNonNegative(%v) to be %v, got %v", test.param, test.expected, actual)
 		}
@@ -111,7 +111,7 @@ func TestIsNonNegative(t *testing.T) {
 
 func TestIsNonPositive(t *testing.T) {
 	for _, test := range exampleFloatIsNonPositive {
-		actual := TFloat.IsNonPositive(test.param)
+		actual := TValidate.IsNonPositive(test.param)
 		if actual != test.expected {
 			t.Errorf("Expected IsNonPositive(%v) to be %v, got %v", test.param, test.expected, actual)
 		}
@@ -120,7 +120,7 @@ func TestIsNonPositive(t *testing.T) {
 
 func TestIsWhole(t *testing.T) {
 	for _, test := range exampleFloatIsWhole {
-		actual := TFloat.IsWhole(test.param)
+		actual := TValidate.IsWhole(test.param)
 		if actual != test.expected {
 			t.Errorf("Expected IsWhole(%v) to be %v, got %v", test.param, test.expected, actual)
 		}
@@ -129,7 +129,7 @@ func TestIsWhole(t *testing.T) {
 
 func TestInRangeFloat32(t *testing.T) {
 	for _, test := range exampleFloatTests {
-		actual := TFloat.IsRangeFloat32(test.param, test.left, test.right)
+		actual := TValidate.IsRangeFloat32(test.param, test.left, test.right)
 		if actual != test.expected {
 			t.Errorf("Expected InRangeFloat32(%v, %v, %v) to be %v, got %v", test.param, test.left, test.right, test.expected, actual)
 		}
@@ -138,7 +138,7 @@ func TestInRangeFloat32(t *testing.T) {
 
 func TestInRangeFloat64(t *testing.T) {
 	for _, test := range exampleFloatTests {
-		actual := TFloat.IsRangeFloat64(float64(test.param), float64(test.left), float64(test.right))
+		actual := TValidate.IsRangeFloat64(float64(test.param), float64(test.left), float64(test.right))
 		if actual != test.expected {
 			t.Errorf("Expected InRangeFloat64(%v, %v, %v) to be %v, got %v", test.param, test.left, test.right, test.expected, actual)
 		}
@@ -147,9 +147,9 @@ func TestInRangeFloat64(t *testing.T) {
 
 func TestAverageFloat64(t *testing.T) {
 	var res1, res2, res3 float64
-	res1 = TFloat.AverageFloat64()
-	res2 = TFloat.AverageFloat64(1)
-	res3 = TFloat.AverageFloat64(1, 2, 3, 4, 5, 6)
+	res1 = TValidate.AverageFloat64()
+	res2 = TValidate.AverageFloat64(1)
+	res3 = TValidate.AverageFloat64(1, 2, 3, 4, 5, 6)
 
 	if res1 != 0 || int(res2) != 1 || TInt.NumberFormat(res3, 2, ".", "") != "3.50" {
 		t.Error("AverageFloat64 unit test fail")
@@ -164,4 +164,3 @@ func TestSumFloat64(t *testing.T) {
 		return
 	}
 }
-

@@ -7,7 +7,7 @@ import (
 
 func TestIsExist(t *testing.T) {
 	filename := "./file.go"
-	if !TFile.IsFileExist(filename) {
+	if !TValidate.IsFileExist(filename) {
 		t.Error("file does not exist")
 		return
 	}
@@ -124,7 +124,7 @@ func TestTouchRenameRemove(t *testing.T) {
 func TestDelDir(t *testing.T) {
 	dir := "./temp"
 	err := TFile.DelDir(dir, true)
-	if err != nil || TFile.IsDir(dir) {
+	if err != nil || TValidate.IsDir(dir) {
 		t.Error("DelDir unit test fail")
 		return
 	}
@@ -137,7 +137,7 @@ func TestDelDir(t *testing.T) {
 func TestAbsPath(t *testing.T) {
 	filename := "./temp/go.png"
 	absPath := TFile.AbsPath(filename)
-	if !TFile.IsFileExist(absPath) {
+	if !TValidate.IsFileExist(absPath) {
 		t.Error("file does not exist")
 		return
 	}

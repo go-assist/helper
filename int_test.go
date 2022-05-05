@@ -26,10 +26,10 @@ func TestAbs(t *testing.T) {
 }
 
 func TestIsOddIsEven(t *testing.T) {
-	res1 := TInt.IsOdd(-1)
-	res2 := TInt.IsOdd(0)
-	res3 := TInt.IsEven(2)
-	res4 := TInt.IsEven(-3)
+	res1 := TValidate.IsOdd(-1)
+	res2 := TValidate.IsOdd(0)
+	res3 := TValidate.IsEven(2)
+	res4 := TValidate.IsEven(-3)
 
 	if !res1 || res2 {
 		t.Error("IsOdd unit test fail")
@@ -42,7 +42,7 @@ func TestIsOddIsEven(t *testing.T) {
 
 func TestInRangeInt(t *testing.T) {
 	for _, test := range exampleIntRange {
-		actual := TInt.IsRangeInt(test.param, test.left, test.right)
+		actual := TValidate.IsRangeInt(test.param, test.left, test.right)
 		if actual != test.expected {
 			t.Errorf("Expected InRangeInt(%v, %v, %v) to be %v, got %v using type int", test.param, test.left, test.right, test.expected, actual)
 		}
